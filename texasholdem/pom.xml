@@ -14,12 +14,12 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
-    <!-- <repositories>
+    <repositories>
         <repository>
             <id>comp30880-cardsharps-git-repo</id>
-            <url>https://github.com/Eiree/COMP30880-CardSharps/tree/main</url>
+            <url>https://github.com/dhruvg102/COMP30880-TEXASHOLDEM-CardSharps</url>
         </repository>
-    </repositories> -->
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -37,7 +37,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
-                    <mainClass>GameOfTexasHoldem</mainClass>
+                    <mainClass>TexasHoldem.GameOfTexasHoldem</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -55,7 +55,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.0.4</version>
                 <configuration>
-                    <mainClass>GameOfTexasHoldem</mainClass>
+                    <mainClass>TexasHoldem.GameOfTexasHoldem</mainClass>
                     <layout>JAR</layout>
                 </configuration>
                 <executions>
