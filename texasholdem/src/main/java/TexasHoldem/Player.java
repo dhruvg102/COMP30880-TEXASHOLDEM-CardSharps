@@ -125,11 +125,11 @@ abstract class Player {
 	} */
 	
 	
-	public void discard() {
+	/* public void discard() {
 		hand = hand.discard();
 		
 		System.out.println(getName() + " discards " + addCount(hand.getNumDiscarded(), "card", "cards") + "\n");
-	}
+	} */
 	
 	
 	public void takePot(PotOfMoney pot) {
