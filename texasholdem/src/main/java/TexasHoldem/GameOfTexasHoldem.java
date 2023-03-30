@@ -10,7 +10,7 @@ import poker.*;
 
 public class GameOfTexasHoldem 
 {	
-	private Player[] players;
+	private PlayerInterface[] players;
 	
 	private DeckOfCards deck;
 	
@@ -24,14 +24,13 @@ public class GameOfTexasHoldem
 	
 	public GameOfTexasHoldem(String[] names, int bank) {
 		numPlayers = names.length;
-		
-		players = new Player[numPlayers];
+		players = new PlayerInterface[numPlayers];
 		
 		for (int i = 0; i < numPlayers; i++)
 			if (i == 0)
-				players[i] = new HumanPlayer(names[i].trim(), bank);
+				players[i] = new HumanHoldemPlayer(names[i].trim(), bank);
 			else
-				players[i] = new ComputerPlayer(names[i].trim(), bank);
+				players[i] = new ComputerHoldemPlayer(names[i].trim(), bank);
 		
 		deck  = new DeckOfCards();
 	}
@@ -49,7 +48,7 @@ public class GameOfTexasHoldem
 	}
 	
 	
-	public Player getPlayer(int num) {
+	public PlayerInterface getPlayer(int num) {
 		if (num >= 0 && num <= numPlayers)
 			return players[num];
 		else

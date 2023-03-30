@@ -11,7 +11,7 @@ import poker.*;
 public class RoundOfTexasHoldem {	
 	public static int DELAY_BETWEEN_ACTIONS	=	1000;  // number of milliseconds between game actions
 	
-	private Player[] players;
+	private PlayerInterface[] players;
 	
 	private DeckOfCards deck;
 	private int numPlayers;
@@ -23,7 +23,7 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public RoundOfTexasHoldem(DeckOfCards deck, Player[] players) {
+	public RoundOfTexasHoldem(DeckOfCards deck, PlayerInterface[] players) {
 		this.players = players;
 		
 		this.deck    = deck;
@@ -38,7 +38,7 @@ public class RoundOfTexasHoldem {
 		
 		openRound();
 
-		discard();
+		//discard();
 	}
 		
 
@@ -54,7 +54,7 @@ public class RoundOfTexasHoldem {
 	}
 	
 	
-	public Player getPlayer(int num) {
+	public PlayerInterface getPlayer(int num) {
 		if (num >= 0 && num <= numPlayers)
 			return players[num];
 		else
@@ -100,7 +100,7 @@ public class RoundOfTexasHoldem {
 	public int getNumBestPlayer(boolean display) {
 		int bestHandScore = 0, score = 0, bestPos = 0;
 			
-		Player bestPlayer = null, currentPlayer = null;
+		PlayerInterface bestPlayer = null, currentPlayer = null;
 			
 		for (int i = 0; i < getNumPlayers(); i++) {
 			currentPlayer = getPlayer(i);
@@ -162,12 +162,12 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 
-	public void discard() {
+	/* public void discard() {
 		for (int i = 0; i < getNumPlayers(); i++) {
 			if (getPlayer(i) != null)
 				getPlayer(i).discard();
 		}
-	}
+	} */
 
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -192,7 +192,7 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	
 	public void openRound()	{
-		Player player = null;
+		PlayerInterface player = null;
 		
 		System.out.println("");
 		
@@ -222,7 +222,7 @@ public class RoundOfTexasHoldem {
 		
 		int stake = -1;
 		
-		Player currentPlayer = null;
+		PlayerInterface currentPlayer = null;
 		
 		deck.reset();
 		
@@ -261,7 +261,7 @@ public class RoundOfTexasHoldem {
 			return;
 		}
 				
-		Player bestPlayer = getPlayer(getNumBestPlayer(true));
+		PlayerInterface bestPlayer = getPlayer(getNumBestPlayer(true));
 			
 		if (bestPlayer != null)
 			bestPlayer.takePot(pot);
