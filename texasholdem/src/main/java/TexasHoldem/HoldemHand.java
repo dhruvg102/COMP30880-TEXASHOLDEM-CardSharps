@@ -8,5 +8,4 @@ public class HoldemHand extends PokerHand {
         super(hand, deck);
     }
 
-
 }

@@ -11,7 +11,7 @@ import poker.*;
 //TODO
 
 public class RoundOfTexasHoldem {	
-	public static int DELAY_BETWEEN_ACTIONS	=	1000;  // number of milliseconds between game actions
+	public static final int DELAY_BETWEEN_ACTIONS	=	1000;  // number of milliseconds between game actions
 	
 	private PlayerInterface[] players;
 	
@@ -172,7 +172,10 @@ public class RoundOfTexasHoldem {
 
 	public boolean canOpen() {
 		PokerHand hand = getPlayer(getNumBestPlayer(false)).getHand();
-		return hand instanceof High;
+		if (hand instanceof High) // not good enough
+			return false;
+		else
+			return true;
 	}
 
 	//--------------------------------------------------------------------//
@@ -206,44 +209,40 @@ public class RoundOfTexasHoldem {
 
 	public void play() {
 		PotOfMoney pot = new PotOfMoney();
-		deck.reset();
-
 		int numActive = getNumActivePlayers();
 		int stake = -1;
 		PlayerInterface currentPlayer = null;
-		
-		
+		deck.reset();
+
 		// while the stakes are getting bigger and there is at least one active player,
 		// then continue to go around the table and play
+
 		while (stake < pot.getCurrentStake() && numActive > 0) {
 			stake = pot.getCurrentStake();
-			
+
 			for (int i = 0; i < getNumPlayers(); i++) {
 				currentPlayer = getPlayer(i);
-				if (currentPlayer == null || currentPlayer.hasFolded()){
+
+				if (currentPlayer == null || currentPlayer.hasFolded())
 					continue;
-				}
+
 				//delay(DELAY_BETWEEN_ACTIONS);
-				if (numActive == 1) {
-					// this must be the last player
+
+				if (numActive == 1) { //if only one player remains
 					currentPlayer.takePot(pot);
+					System.out.println("\nNo Players left in the game.\n");
 					return;
 				}
-				currentPlayer.nextAction(pot);
 				
-				if (currentPlayer.hasFolded()){
+				currentPlayer.nextAction(pot);
+
+				if (currentPlayer.hasFolded()){ //checks for fold
 					numActive--;
-				} // must have just folded
+				} 
 			}
 		}
-		
-		if (numActive == 0) { // no player is left in the game
-			System.out.println("\nNo Players left in the game.\n");
-			return;
-		}
-				
+
 		PlayerInterface bestPlayer = getPlayer(getNumBestPlayer(true));
-			
 		if (bestPlayer != null)
 			bestPlayer.takePot(pot);
 	}

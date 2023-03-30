@@ -177,7 +177,6 @@ public class RoundOfPoker {
 
 	public boolean canOpen() {
 		PokerHand hand = getPlayer(getNumBestPlayer(false)).getHand();
-		
 		if (hand instanceof High) // not good enough
 			return false;
 		else
