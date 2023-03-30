@@ -1,8 +1,5 @@
 package TexasHoldem;
-
-import poker.DeckOfCards;
-import poker.PokerHand;
-import poker.PotOfMoney;
+import poker.*;
 
 public interface PlayerInterface {
     public void reset();

@@ -1,5 +1,6 @@
 
 package TexasHoldem;
+import poker.*;
 
 // This package provides classes necessary for implementing a game system for playing poker
 

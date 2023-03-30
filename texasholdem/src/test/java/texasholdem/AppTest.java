@@ -1,4 +1,4 @@
-package blackjack;
+package texasholdem;
 
 import static org.junit.Assert.assertTrue;
 

@@ -1,5 +1,6 @@
 
 package TexasHoldem;
+import poker.*;
 
 // This package provides classes necessary for implementing a game system for playing poker
 
@@ -70,7 +71,7 @@ public class HumanPlayer extends Player {
 	
 			for (int i = 0; i < input.length; i++)
 				if ((char)input[i] >= '0' && (char)input[i] < '5') {
-					throwaway(input[i] - '0', false);
+					/* throwaway(input[i] - '0', false); */
 					
 					numDiscarded++;
 					

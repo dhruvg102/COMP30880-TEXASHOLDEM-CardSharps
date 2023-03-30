@@ -1,5 +1,6 @@
 
 package TexasHoldem;
+import poker.*;
 
 // This package provides classes necessary for implementing a game system for playing poker
 
@@ -116,13 +117,12 @@ abstract class Player {
 		hand = deck.dealHand();
 	}
 	
-	
-	public void throwaway(int cardPos, boolean recategorize) {
+	/* public void throwaway(int cardPos, boolean recategorize) {
 		hand.throwaway(cardPos);
 		
 		if (recategorize)
 			reorganizeHand();
-	}
+	} */
 	
 	
 	public void discard() {
