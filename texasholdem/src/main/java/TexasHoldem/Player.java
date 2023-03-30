@@ -1,5 +1,7 @@
 
 package TexasHoldem;
+import java.util.ArrayList;
+
 import poker.*;
 
 // This package provides classes necessary for implementing a game system for playing poker
@@ -30,9 +32,7 @@ abstract class Player {
 	
 	public Player(String name, int money)	{
 		this.name = name;
-		
-		bank      = money;
-		
+		bank = money;
 		reset();
 	}
 		
@@ -44,7 +44,6 @@ abstract class Player {
 
 	public void reset() {
 		folded = false;
-		
 		stake  = 0;
 	}
 	
@@ -116,6 +115,7 @@ abstract class Player {
 	public void dealTo(DeckOfCards deck) {
 		hand = deck.dealHand();
 	}
+
 	
 	/* public void throwaway(int cardPos, boolean recategorize) {
 		hand.throwaway(cardPos);
