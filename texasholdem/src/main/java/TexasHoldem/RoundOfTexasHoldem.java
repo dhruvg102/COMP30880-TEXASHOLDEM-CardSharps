@@ -8,6 +8,8 @@ import poker.*;
 // A PokerGame is a sequence of RoundOfPoker's
 
 
+//TODO
+
 public class RoundOfTexasHoldem {	
 	public static int DELAY_BETWEEN_ACTIONS	=	1000;  // number of milliseconds between game actions
 	
@@ -24,20 +26,13 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	
 	public RoundOfTexasHoldem(DeckOfCards deck, PlayerInterface[] players) {
-		this.players = players;
-		
-		this.deck    = deck;
-		
-		numPlayers   = players.length;
-	
-		System.out.println("\n\nNew Deal:\n\n");
-		
+		this.players = players; //init players
+		this.deck    = deck; //init deck
+		numPlayers   = players.length; //get totalPlayers
+		System.out.println("\n\nNew Deal:\n\n"); 
 		deal();
-		
 		while (!canOpen()) deal();  // continue to redeal until some player can open
-		
 		openRound();
-
 		//discard();
 	}
 		
@@ -99,7 +94,6 @@ public class RoundOfTexasHoldem {
 
 	public int getNumBestPlayer(boolean display) {
 		int bestHandScore = 0, score = 0, bestPos = 0;
-			
 		PlayerInterface bestPlayer = null, currentPlayer = null;
 			
 		for (int i = 0; i < getNumPlayers(); i++) {
@@ -178,11 +172,7 @@ public class RoundOfTexasHoldem {
 
 	public boolean canOpen() {
 		PokerHand hand = getPlayer(getNumBestPlayer(false)).getHand();
-		
-		if (hand instanceof High) // not good enough
-			return false;
-		else
-			return true;
+		return hand instanceof High;
 	}
 
 	//--------------------------------------------------------------------//
@@ -193,7 +183,6 @@ public class RoundOfTexasHoldem {
 	
 	public void openRound()	{
 		PlayerInterface player = null;
-		
 		System.out.println("");
 		
 		for (int i = 0; i < numPlayers; i++) {
@@ -202,7 +191,7 @@ public class RoundOfTexasHoldem {
 			if (player == null || player.isBankrupt()) 
 				continue;
 			
-			if (player.getHand() instanceof High)
+			if (player.getHand() instanceof High) //TODO - This doesnt apply to texasHoldem
 				System.out.println("> " + player.getName() + " says: I cannot open.");
 			else
 				System.out.println("> " + player.getName() + " says: I can open.");
@@ -217,46 +206,33 @@ public class RoundOfTexasHoldem {
 
 	public void play() {
 		PotOfMoney pot = new PotOfMoney();
-		
+		deck.reset();
+
 		int numActive = getNumActivePlayers();
-		
-		int stake = -1;
-		
 		PlayerInterface currentPlayer = null;
 		
-		deck.reset();
 		
 		// while the stakes are getting bigger and there is at least one active player,
 		// then continue to go around the table and play
-		
-		while (stake < pot.getCurrentStake() && numActive > 0) {
-			stake = pot.getCurrentStake();
-			
+		while (numActive > 0){ //while active players is greater than 0
+			int stake = pot.getCurrentStake();
 			for (int i = 0; i < getNumPlayers(); i++) {
 				currentPlayer = getPlayer(i);
-				
-				if (currentPlayer == null || currentPlayer.hasFolded())
-					continue;   
-				
-				delay(DELAY_BETWEEN_ACTIONS);
-				
-				if (numActive == 1) {
-					// this must be the last player
-				
-					currentPlayer.takePot(pot);
-					return;
+				if (currentPlayer == null || currentPlayer.hasFolded()) {
+					continue;
 				}
-				else
-					currentPlayer.nextAction(pot);
 				
-				if (currentPlayer.hasFolded()) // must have just folded
+				// delay(DELAY_BETWEEN_ACTIONS);
+
+				currentPlayer.nextAction(pot);
+
+				if (currentPlayer.hasFolded()) {
 					numActive--;
+				} // must have just folded
 			}
 		}
 		
-		if (numActive == 0) {
-			// no player is left in the game
-			
+		if (numActive == 0) { // no player is left in the game
 			System.out.println("\nNo Players left in the game.\n");
 			return;
 		}
@@ -268,16 +244,15 @@ public class RoundOfTexasHoldem {
 	}
 	
 	
-	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	// Some small but useful helper routines
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 
-	private void delay(int numMilliseconds) {
+	/* private void delay(int numMilliseconds) {
 		try {
 			Thread.sleep(numMilliseconds);
 		} catch (Exception e) {}
-	}
+	} */
 }  
