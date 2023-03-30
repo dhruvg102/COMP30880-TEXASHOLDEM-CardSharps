@@ -209,24 +209,29 @@ public class RoundOfTexasHoldem {
 		deck.reset();
 
 		int numActive = getNumActivePlayers();
+		int stake = -1;
 		PlayerInterface currentPlayer = null;
 		
 		
 		// while the stakes are getting bigger and there is at least one active player,
 		// then continue to go around the table and play
-		while (numActive > 0){ //while active players is greater than 0
-			int stake = pot.getCurrentStake();
+		while (stake < pot.getCurrentStake() && numActive > 0) {
+			stake = pot.getCurrentStake();
+			
 			for (int i = 0; i < getNumPlayers(); i++) {
 				currentPlayer = getPlayer(i);
-				if (currentPlayer == null || currentPlayer.hasFolded()) {
+				if (currentPlayer == null || currentPlayer.hasFolded()){
 					continue;
 				}
-				
-				// delay(DELAY_BETWEEN_ACTIONS);
-
+				//delay(DELAY_BETWEEN_ACTIONS);
+				if (numActive == 1) {
+					// this must be the last player
+					currentPlayer.takePot(pot);
+					return;
+				}
 				currentPlayer.nextAction(pot);
-
-				if (currentPlayer.hasFolded()) {
+				
+				if (currentPlayer.hasFolded()){
 					numActive--;
 				} // must have just folded
 			}
