@@ -1,19 +1,23 @@
 
-package TexasHoldem;
+package poker;
 
 // This package provides classes necessary for implementing a game system for playing poker
 
 
-public class FaceCard extends Card
-{	
+public class NumberCard extends Card {
+	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	// Constructors
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public FaceCard(String face, String suit, int rank)	{
-		super(face, suit, rank);
+	public NumberCard(String name, String suit, int rank) {
+		this(name, suit, rank, rank);
+	}
+	
+	public NumberCard(String name, String suit, int rank, int value) {
+		super(name, suit, rank, value);
 	}
 	
 }

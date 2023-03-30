@@ -1,81 +1,69 @@
 
-package TexasHoldem;
+package poker;
 
 // This package provides classes necessary for implementing a game system for playing poker
 
 
-public class PotOfMoney
-{	
-	private int total = 0; // the total amount of money in the table, waiting to be won
-	
-	private int stake = 0; // the current highest stake expected 
-						   // of each player to stay in the game
+public class FourOfAKind extends PokerHand {
 	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
-	// Constructor
+	// Constructors
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public PotOfMoney() {}
+	public FourOfAKind(Card[] hand, DeckOfCards deck) {
+		super(hand, deck);
+	}
 
-		
+
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
-	// Display Behaviour 
+	// What is the riskworthiness of this hand?
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public String toString() {
-		return "There is a pot of " + total + " chip(s) on the table";
+	public int getRiskWorthiness() 	{
+		return 100 - PokerHand.FOURS_RISK; 
+	}
+
+	
+	//--------------------------------------------------------------------//
+	//--------------------------------------------------------------------//
+	// What is the value of this hand?
+	//--------------------------------------------------------------------//
+	//--------------------------------------------------------------------//
+	
+	public int getValue()	{
+		if (getCard(0).getRank() == getCard(3).getRank())
+			return PokerHand.FOURS_VALUE + getCard(0).getValue();
+		else
+			return PokerHand.FOURS_VALUE + getCard(1).getValue();
 	}
 	
+
+	//--------------------------------------------------------------------//
+    //--------------------------------------------------------------------//
+	// Discard and redeal some cards
+	//--------------------------------------------------------------------//
+	//--------------------------------------------------------------------//
 	
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-	// Accessors
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-	
-	public int getTotal() {
-		return total;
+	public PokerHand discard()	{
+		if (getCard(0).getRank() == getCard(3).getRank())
+			return discard(4);
+		else
+			return discard(0);
 	}
-	
-	public int getCurrentStake() {
-		return stake;
-	}
-	
+
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
-	// Modifiers
+	// Display
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public void raiseStake(int addition) {
-		stake += addition;
-		
-		addToPot(addition);
-	}
-	
-	
-	public void addToPot(int addition) {
-		total += addition;
-	}
-	
-	
-	public void clearPot() {
-		total = 0;
-	}
-	
-	
-	public int takePot() {
-	    // when the winner of a hand takes the pot as his/her winnings  
-		
-		int winnings = getTotal();
-		
-		clearPot();
-		
-		return winnings;
+	public String toString() 	{
+		return "Four of a kind: " + super.toString();
 	}
 	
 }
+

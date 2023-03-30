@@ -1,10 +1,10 @@
 
-package TexasHoldem;
+package poker;
 
 // This package provides classes necessary for implementing a game system for playing poker
 
 
-public class TwoPair extends PokerHand {
+public class FullHouse extends PokerHand {
 	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -12,21 +12,20 @@ public class TwoPair extends PokerHand {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public TwoPair(Card[] hand, DeckOfCards deck) {
+	public FullHouse(Card[] hand, DeckOfCards deck)	{
 		super(hand, deck);
 	}
 
-	
+
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	// What is the riskworthiness of this hand?
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public int getRiskWorthiness() {
-		return 100 - PokerHand.TWOPAIR_RISK; 
+	public int getRiskWorthiness()	{
+		return 100 - FULLHOUSE_RISK; 
 	}
-	
 
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -34,42 +33,21 @@ public class TwoPair extends PokerHand {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public int getValue() {
-		if (getCard(0).getRank() == getCard(1).getRank()) {
-			if (getCard(2).getRank() == getCard(3).getRank())
-				return PokerHand.TWOPAIR_VALUE + getCard(0).getValue()*100 + getCard(2).getValue()*10 + getCard(4).getValue();
-			else
-				return PokerHand.TWOPAIR_VALUE + getCard(0).getValue()*100 + getCard(3).getValue()*10 + getCard(2).getValue();
-		}
+	public int getValue()	{
+		if (getCard(0).getRank() == getCard(2).getRank())  // triple + pair
+			return PokerHand.FULLHOUSE_VALUE + getCard(0).getValue()*100 + getCard(3).getValue();
 		else
-			return PokerHand.TWOPAIR_VALUE + getCard(1).getValue()*100 + getCard(3).getValue()*10 + getCard(0).getValue();
+			return PokerHand.FULLHOUSE_VALUE + getCard(2).getValue()*100 + getCard(0).getValue();
 	}
 	
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-	// Discard and redeal some cards
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-	
-	public PokerHand discard() {
-		if (getCard(0).getRank() == getCard(1).getRank()) {
-			if (getCard(2).getRank() == getCard(3).getRank())
-				return discard(4);
-			else
-				return discard(2);
-		}
-		else
-			return discard(0);
-	}
-
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	// Display
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public String toString() {
-		return "Two Pair: " + super.toString();
+	public String toString() 	{
+		return "Full House: " + super.toString();
 	}
 	
 }
