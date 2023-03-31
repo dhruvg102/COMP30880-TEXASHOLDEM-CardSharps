@@ -5,6 +5,8 @@ package poker;
 
 import java.util.Random;
 
+import TexasHoldem.HoldemHand;
+
 
 public class DeckOfCards {
 	public static final String[] suits 	= {"hearts", "diamonds", "clubs", "spades"};
@@ -96,8 +98,12 @@ public class DeckOfCards {
 	
 	public PokerHand dealHand() {
 		PokerHand hand = new PokerHand(this);
-		
 		return hand.categorize();
+	}
+
+	public HoldemHand dealHoldemHand(){
+		HoldemHand hand = new HoldemHand(this);
+		return hand;
 	}
 
 	//--------------------------------------------------------------------//
