@@ -246,7 +246,7 @@ public class RoundOfPoker {
 				}
 				else
 					currentPlayer.nextAction(pot);
-				
+				 
 				if (currentPlayer.hasFolded()) // must have just folded
 					numActive--;
 			}

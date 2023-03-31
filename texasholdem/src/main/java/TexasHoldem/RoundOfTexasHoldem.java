@@ -181,6 +181,7 @@ public class RoundOfTexasHoldem {
 	private final int SMALL_BLIND = 1;
 	private final int BIG_BLIND = 2;
 
+
 	public void canOpen() {
 
 		//Player to the left of the dealer posts the small blind
@@ -237,13 +238,15 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
+	//SIDE POT CLASS extends POT OF MONEY
+
 	//TODO: Side bets Showdown
 	public void play(){
 
 		// Initialize bank and print the values for each player;
 		PotOfMoney pot = new PotOfMoney();
-		int numActive = getNumActivePlayers();
-		int stake = -1;
+		Integer numActive = getNumActivePlayers();
+		Integer stake = -1;
 		PlayerInterface currentPlayer = null;
 		deck.reset();
 		
@@ -252,22 +255,21 @@ public class RoundOfTexasHoldem {
 		// Game actions
 		// (call, raise, fold);
 		// Start betting sequence left of the big blind;
-		preflop(pot);
+		preflop(stake, numActive, pot);
 
 		//Whilst there are >= 2 players are still active;
 		//CHECK?? is also possible (no idea)
-		flop(pot);
+		flop(stake, numActive , pot);
 
 		// Turn 4th community card (turn) is turned while there are >= 2 players active.
 		//TODO
-		turn(pot);
+		turn(stake, numActive , pot);
 
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
-		river(pot);
+		river(stake, numActive , pot);
 
-		
-
-
+		//if all players call or fold then it stops and goes to next part
+		//if raise goes through loop again all the players that called not the folded
 
 	}
 
@@ -276,55 +278,109 @@ public class RoundOfTexasHoldem {
 		//Post small blind
 		smallBlind.postBlind(pot, SMALL_BLIND, "Small Blind");
 		//Post big blind
-		smallBlind.postBlind(pot, SMALL_BLIND, "Big Blind");
+		smallBlind.postBlind(pot, BIG_BLIND, "Big Blind");
 		
 	}
-	private void preflop(PotOfMoney pot){
+	private void dealCommunity(int numCards){
+		for(int i = 0; i < getNumPlayers();i++){
+			for(int j = 0; j < numCards; j++){
+				//players[i].getHand().dealCard(deck.dealNext());
+			}
+		}
+	}
+	private void goAround(Integer playerStart, Integer numActive, PotOfMoney pot){
+		for (int i = 0; i < getNumPlayers(); i++) {
+			PlayerInterface currentPlayer = getPlayer((playerStart + i)%getNumPlayers());
+
+			if (currentPlayer == null || currentPlayer.hasFolded())
+				continue;
+
+			//delay(DELAY_BETWEEN_ACTIONS);
+
+			if (numActive == 1) { //if only one player remains
+				currentPlayer.takePot(pot);
+				System.out.println("\nNo Players left in the game.\n");
+				return;
+			}
+			
+			currentPlayer.nextAction(pot);
+
+			if (currentPlayer.hasFolded()){ //checks for fold
+				numActive--;
+			} 
+		}
+	}
+	private void preflop(Integer stake, Integer numActive, PotOfMoney pot){
+
+		System.out.println("---PREFLOP---");
+
+
 		int playerStart = button+3;	//3 becouse player left to big blind starts
-		
-		for(int i =0;i<getNumPlayers();i++){
-			int current = (playerStart+i) % getNumPlayers();
-			players[current].nextAction(pot);
+
+		while (stake < pot.getCurrentStake() && numActive > 0) {
+			stake = pot.getCurrentStake();
+
+			goAround(playerStart, numActive, pot);
 		}
+			
 
 	}
-	private void flop(PotOfMoney pot){
+	private void flop(Integer stake,Integer numActive, PotOfMoney pot){
+
+		System.out.println("---FLOP---");
+
 		// Turn 3 community (flop) cards 
+		dealCommunity(3);
 
-		int playerStart = button+1;	//1 becouse player left to dealer starts
-		
-		for(int i =0;i<getNumPlayers();i++){
-			int current = (playerStart+i) % getNumPlayers();
-			players[current].nextAction(pot);
+		int playerStart = button+1;	//3 becouse player left to big blind starts
+
+		while (stake < pot.getCurrentStake() && numActive > 0) {
+			stake = pot.getCurrentStake();
+
+			goAround(playerStart, numActive, pot);
 		}
 
 	}
 
-	private void turn(PotOfMoney pot){
+	private void turn(Integer stake,Integer numActive, PotOfMoney pot){
+
+		System.out.println("---TURN---");
+
+
 		// Deal the turn card card 
+		dealCommunity(1);
 
-		int playerStart = button+1;	//1 becouse player left to dealer starts
-		
-		for(int i =0;i<getNumPlayers();i++){
-			int current = (playerStart+i) % getNumPlayers();
-			players[current].nextAction(pot);
+		int playerStart = button+1;	//3 becouse player left to big blind starts
+
+		while (stake < pot.getCurrentStake() && numActive > 0) {
+			stake = pot.getCurrentStake();
+
+			goAround(playerStart, numActive, pot);
 		}
-
 	}
 
-	private void river(PotOfMoney pot){
+	private void river(Integer stake, Integer numActive, PotOfMoney pot){
+
+
+		System.out.println("---RIVER---");
+
+
 		// Deal the river card 
+		dealCommunity(1);
 
-		int playerStart = button+1;	//1 becouse player left to dealer starts
-		
-		for(int i =0;i<getNumPlayers();i++){
-			int current = (playerStart+i) % getNumPlayers();
-			players[current].nextAction(pot);
+		int playerStart = button+1;	//3 becouse player left to big blind starts
+
+		while (stake < pot.getCurrentStake() && numActive > 0) {
+			stake = pot.getCurrentStake();
+
+			goAround(playerStart, numActive, pot);
 		}
 
 	}
-
+	
 	private void showdown(PotOfMoney pot){
+
+		System.out.println("---SHOWDOWN---");
 
 		// Check for winner of side-pot(s);
 		// Check for winner of main-pot;
