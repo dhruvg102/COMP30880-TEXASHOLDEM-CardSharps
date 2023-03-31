@@ -249,10 +249,11 @@ public class RoundOfTexasHoldem {
 	public void play(){
 
 		PotTexasHoldem mainPot = new PotTexasHoldem();
+		mainPot.addPlayers(players);
 		pots.add(mainPot);
 
 		// Initialize bank and print the values for each player;
-		Integer numActive = getNumActivePlayers();
+		Integer numActive = mainPot.getNumPlayers();
 		Integer stake = -1;
 		PlayerInterface currentPlayer = null;
 		deck.reset();
@@ -290,7 +291,8 @@ public class RoundOfTexasHoldem {
 		smallBlind.postBlind(pot, BIG_BLIND, "Big Blind");
 		
 	}
-	
+	//TODO
+	//Deal only to players still in game
 	private void dealCommunity(int numCards){
 		for(int i = 0; i < getNumPlayers();i++){
 			for(int j = 0; j < numCards; j++){
@@ -300,10 +302,9 @@ public class RoundOfTexasHoldem {
 	}
 	
 	private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
-		
 
-		for (int i = 0; i < getNumPlayers(); i++) {
-			PlayerInterface currentPlayer = getPlayer((playerStart + i)%getNumPlayers());
+		for (int i = 0; i < pot.getNumPlayers() ; i++) {
+			PlayerInterface currentPlayer = pot.getPlayer((playerStart + i)% pot.getNumPlayers());
 
 			if (currentPlayer == null || currentPlayer.hasFolded())
 				continue;
@@ -334,7 +335,7 @@ public class RoundOfTexasHoldem {
 		while (stake < pot.getCurrentStake() && numActive > 0) {
 			stake = pot.getCurrentStake();
 
-			goAround(playerStart, numActive, pot);
+			goAround(playerStart, pot.getNumPlayers(), pot);
 		}
 			
 
@@ -352,7 +353,7 @@ public class RoundOfTexasHoldem {
 		while (stake < pot.getCurrentStake() && numActive > 0) {
 			stake = pot.getCurrentStake();
 
-			goAround(playerStart, numActive, pot);
+			goAround(playerStart,  pot.getNumPlayers(), pot);
 		}
 
 	}
@@ -370,7 +371,7 @@ public class RoundOfTexasHoldem {
 		while (stake < pot.getCurrentStake() && numActive > 0) {
 			stake = pot.getCurrentStake();
 
-			goAround(playerStart, numActive, pot);
+			goAround(playerStart,  pot.getNumPlayers(), pot);
 		}
 	}
 
@@ -388,7 +389,7 @@ public class RoundOfTexasHoldem {
 		while (stake < pot.getCurrentStake() && numActive > 0) {
 			stake = pot.getCurrentStake();
 
-			goAround(playerStart, numActive, pot);
+			goAround(playerStart,  pot.getNumPlayers(), pot);
 		}
 
 	}
