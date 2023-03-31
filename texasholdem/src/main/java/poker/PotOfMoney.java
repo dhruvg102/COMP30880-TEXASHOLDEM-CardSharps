@@ -10,6 +10,8 @@ public class PotOfMoney
 	
 	private int stake = 0; // the current highest stake expected 
 						   // of each player to stay in the game
+
+						   
 	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//

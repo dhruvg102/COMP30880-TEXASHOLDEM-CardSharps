@@ -1,5 +1,7 @@
 
 package TexasHoldem;
+import java.util.ArrayList;
+
 import poker.*;
 
 // This package provides classes necessary for implementing a game system for playing poker
@@ -240,47 +242,55 @@ public class RoundOfTexasHoldem {
 	
 	//SIDE POT CLASS extends POT OF MONEY
 
+
+	ArrayList<PotTexasHoldem> pots = new ArrayList<PotTexasHoldem>();
+
 	//TODO: Side bets Showdown
 	public void play(){
 
+		PotTexasHoldem mainPot = new PotTexasHoldem();
+		pots.add(mainPot);
+
 		// Initialize bank and print the values for each player;
-		PotOfMoney pot = new PotOfMoney();
 		Integer numActive = getNumActivePlayers();
 		Integer stake = -1;
 		PlayerInterface currentPlayer = null;
 		deck.reset();
+
 		
-		roundOpen(pot, players[button+1], players[button+2]);
+		
+		roundOpen(mainPot, players[button+1], players[button+2]);
 		
 		// Game actions
 		// (call, raise, fold);
 		// Start betting sequence left of the big blind;
-		preflop(stake, numActive, pot);
+		preflop(stake, numActive, pots.get(pots.size()-1));
 
 		//Whilst there are >= 2 players are still active;
 		//CHECK?? is also possible (no idea)
-		flop(stake, numActive , pot);
+		flop(stake, numActive , pots.get(pots.size()-1));
 
 		// Turn 4th community card (turn) is turned while there are >= 2 players active.
 		//TODO
-		turn(stake, numActive , pot);
+		turn(stake, numActive , pots.get(pots.size()-1));
 
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
-		river(stake, numActive , pot);
+		river(stake, numActive , pots.get(pots.size()-1));
 
 		//if all players call or fold then it stops and goes to next part
 		//if raise goes through loop again all the players that called not the folded
 
 	}
 
-	private void roundOpen(PotOfMoney pot, PlayerInterface smallBlind, PlayerInterface bigBlind ){
-
+	private void roundOpen(PotTexasHoldem pot, PlayerInterface smallBlind, PlayerInterface bigBlind ){
+		
 		//Post small blind
 		smallBlind.postBlind(pot, SMALL_BLIND, "Small Blind");
 		//Post big blind
 		smallBlind.postBlind(pot, BIG_BLIND, "Big Blind");
 		
 	}
+	
 	private void dealCommunity(int numCards){
 		for(int i = 0; i < getNumPlayers();i++){
 			for(int j = 0; j < numCards; j++){
@@ -288,7 +298,10 @@ public class RoundOfTexasHoldem {
 			}
 		}
 	}
-	private void goAround(Integer playerStart, Integer numActive, PotOfMoney pot){
+	
+	private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
+		
+
 		for (int i = 0; i < getNumPlayers(); i++) {
 			PlayerInterface currentPlayer = getPlayer((playerStart + i)%getNumPlayers());
 
@@ -310,7 +323,8 @@ public class RoundOfTexasHoldem {
 			} 
 		}
 	}
-	private void preflop(Integer stake, Integer numActive, PotOfMoney pot){
+	
+	private void preflop(Integer stake, Integer numActive, PotTexasHoldem pot){
 
 		System.out.println("---PREFLOP---");
 
@@ -325,7 +339,8 @@ public class RoundOfTexasHoldem {
 			
 
 	}
-	private void flop(Integer stake,Integer numActive, PotOfMoney pot){
+	
+	private void flop(Integer stake,Integer numActive, PotTexasHoldem pot){
 
 		System.out.println("---FLOP---");
 
@@ -342,7 +357,7 @@ public class RoundOfTexasHoldem {
 
 	}
 
-	private void turn(Integer stake,Integer numActive, PotOfMoney pot){
+	private void turn(Integer stake,Integer numActive, PotTexasHoldem pot){
 
 		System.out.println("---TURN---");
 
@@ -359,7 +374,7 @@ public class RoundOfTexasHoldem {
 		}
 	}
 
-	private void river(Integer stake, Integer numActive, PotOfMoney pot){
+	private void river(Integer stake, Integer numActive, PotTexasHoldem pot){
 
 
 		System.out.println("---RIVER---");
