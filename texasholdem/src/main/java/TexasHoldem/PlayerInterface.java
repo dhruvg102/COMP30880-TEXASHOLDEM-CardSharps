@@ -4,13 +4,13 @@ import poker.*;
 public interface PlayerInterface {
     public void reset();
     public String toString();
-    public PokerHand getHand();
+    public HoldemHand getHand();
     public int getBank();
     public int getStake();
     public String getName();
     public boolean isBankrupt();
     public boolean hasFolded();
-    public void reorganizeHand();
+    //public void reorganizeHand();
     public void dealTo(DeckOfCards deck);
     public void takePot(PotOfMoney pot);
     public void fold();

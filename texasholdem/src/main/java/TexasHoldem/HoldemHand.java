@@ -109,7 +109,10 @@ public class HoldemHand {
 
 
     public static final int DEFAULT_RISK = 20;
-    public static final int NUMCARDS = 5; // total number of cards to be determined TODO - as players get 2 cards only their total hand is accounted for their best 5 cards.
+
+    public static final int INIT_PLAYER_CARDS = 2; // total number of cards to be determined TODO - as players get 2 cards only their total hand is accounted for their best 5 cards.
+    public static final int NUM_COMMUNITY_CARDS = 5;
+    public static final int TOTAL_CARDS = INIT_PLAYER_CARDS+NUM_COMMUNITY_CARDS;
     
     private Card[] communityCards; //define community cards as an array of cards for reference
     private Card[] playerHand; //define playerHand as an array of cards
@@ -124,21 +127,20 @@ public class HoldemHand {
 
     public HoldemHand(DeckOfCards deck){
         this.deck = deck; //init deck
-        playerHand = new Card[NUMCARDS];
-        communityCards = new Card[5]; // Init community cards which uses count to determine where we are in the game.
-        communityCardsCount = 0;
+        playerHand = new Card[INIT_PLAYER_CARDS];
+        communityCards = new Card[NUM_COMMUNITY_CARDS]; // Init community cards which uses count to determine where we are in the game.
+        communityCardsCount = 3;
     }
 
     public int getRiskWorthiness(){ //We override this value for specific hands such as Straight, FullHouse etc..
-        return DEFAULT_RISK;
+        return DEFAULT_RISK; //TODO - Change to enum with setter inside
     }
 
 
     //Display a hand
     public String toString(){
         String desc = "";
-
-        for (int i = 0; i < NUMCARDS; i++)
+        for (int i = 0; i < NUM_COMMUNITY_CARDS; i++)
             desc = desc + "\n      " + i + ":  " + getCard(i).toString();
 
         return desc + "\n";
@@ -147,7 +149,7 @@ public class HoldemHand {
 
     //modifiers
     public void setCard(int num, Card card){
-        if (num >= 0 && num < NUMCARDS)
+        if (num >= 0 && num < TOTAL_CARDS)
             playerHand[num] = card;
     }
 
@@ -155,7 +157,7 @@ public class HoldemHand {
 
     //Accesors
     public Card getCard(int num){ //get card at index
-        if (num >= 0 && num < NUMCARDS)
+        if (num >= 0 && num < TOTAL_CARDS)
             return playerHand[num];
         else
             return null;
@@ -164,6 +166,7 @@ public class HoldemHand {
     public int getValue(){
         return getCard(0).getValue(); // simply return the value of the higest card
     }
+
 
 
 
@@ -192,7 +195,7 @@ public class HoldemHand {
         sortHand();
         boolean isAceLow = playerHand[0].getValue() == CardValue.ACE.getCardValue(false);
         int count = 0;
-        for (int i = 1; i < NUMCARDS; i++) {
+        for (int i = 1; i < 5; i++) {
             if (playerHand[i].getValue() == playerHand[i - 1].getValue() - 1){
                 count++;
             } else if (playerHand[i].getValue() == playerHand[i - 1].getValue()){
@@ -207,7 +210,7 @@ public class HoldemHand {
     }
 
     public boolean isFlush(){ //returns true if all cards in the hand are the same suit
-        for (int i = 1; i < NUMCARDS; i++){
+        for (int i = 1; i < 5; i++){
             if (getCard(i).getSuit() != getCard(0).getSuit()){
                 return false;
             }
@@ -267,7 +270,7 @@ public class HoldemHand {
     
     public boolean isPair(){ //returns true if the hand has one pair of cards with the same value
         sortHand();
-        for (int i = 0; i < NUMCARDS - 1; i++){
+        for (int i = 0; i < 5 - 1; i++){
             if (playerHand[i].getValue() == playerHand[i + 1].getValue())
                 return true;
         }
@@ -289,22 +292,20 @@ public class HoldemHand {
         }
     }
 
-
     public void dealFlop(){ //TODO - Im not sure how we're implementing this yet
         communityCards[0] = deck.dealNext();
         communityCards[1] = deck.dealNext();
         communityCards[2] = deck.dealNext();
-        communityCardsCount = 3;
     }
 
     public void dealTurn(){
         communityCards[3] = deck.dealNext();
-        communityCardsCount = 4;
+        communityCardsCount++;
     }
 
     public void dealRiver(){
         communityCards[4] = deck.dealNext();
-        communityCardsCount = 5;
+        communityCardsCount++;
     }
 
     public void showDown() {

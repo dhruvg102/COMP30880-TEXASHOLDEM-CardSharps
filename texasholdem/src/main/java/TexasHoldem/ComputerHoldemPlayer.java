@@ -12,7 +12,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 
     private String name    		= "Player";  // the unique identifying name given to the player
 
-    private PokerHand hand 		= null;      // the hand dealt to this player
+    private HoldemHand hand 		= null;      // the hand dealt to this player
 
     private boolean folded 		= false;     // set to true when the player folds (gives up)
 
@@ -50,7 +50,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     }
 
     @Override
-    public PokerHand getHand() {
+    public HoldemHand getHand() {
         return hand;
     }
 
@@ -79,14 +79,14 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         return folded;
     }
 
-    @Override
+    /* @Override
     public void reorganizeHand() {
         hand = hand.categorize();
-    }
+    } */
 
     @Override
     public void dealTo(DeckOfCards deck) {
-        hand = deck.dealHand();
+        hand = deck.dealHoldemHand();
     }
 
     @Override
