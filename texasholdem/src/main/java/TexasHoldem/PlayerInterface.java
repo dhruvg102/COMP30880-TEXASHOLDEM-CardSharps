@@ -21,4 +21,8 @@ public interface PlayerInterface {
     public boolean shouldSee(PotOfMoney pot);
     public boolean shouldRaise(PotOfMoney pot);
     public void nextAction(PotOfMoney pot);
+
+    //Different method to open bet
+    public boolean postBlind(PotOfMoney pot, int blindAmt, String type);
+
 }

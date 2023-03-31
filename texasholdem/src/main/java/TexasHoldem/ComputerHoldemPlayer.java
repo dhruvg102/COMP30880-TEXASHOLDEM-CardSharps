@@ -120,7 +120,32 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         System.out.println("\n> " + getName() + " says: I open with one chip!\n");
 
     }
+    @Override
+    public boolean postBlind(PotOfMoney pot, int blindAmt, String type) {
+		if (bank == 0) return false;
 
+		//FLAG to check if player had enough for blind
+		boolean enough = true;
+
+		if(bank < blindAmt) {
+			stake = stake + bank;
+			pot.raiseStake(bank);
+			bank = 0;
+
+			//Change state to all - in ??
+			//TODO
+			enough=false;
+		}
+		else{
+			stake = stake + blindAmt;
+			pot.raiseStake(blindAmt);
+			bank = bank-blindAmt;
+
+		}
+		
+		System.out.println("\n> " + getName() + " says: I post " + type + " with "+ blindAmt +" chip!\n");
+		return enough;
+	}
     @Override
     public void seeBet(PotOfMoney pot) {
         int needed  = pot.getCurrentStake() - getStake();
