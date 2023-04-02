@@ -233,6 +233,9 @@ public class HumanHoldemPlayer implements PlayerInterface {
                 else
                     fold();
             }
+            else {
+                System.out.println("\n> " + getName() + " says: I check!\n");
+            }
         }
     }
 
