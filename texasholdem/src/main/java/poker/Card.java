@@ -102,6 +102,10 @@ public class Card
 	public boolean isKing() {
 		return getName() == "King";
 	}
+
+	public int compareTo(Card other){
+		return Integer.compare(this.rank, other.rank);
+	}
 	
 }
 	
