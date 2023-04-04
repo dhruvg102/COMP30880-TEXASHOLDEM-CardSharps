@@ -19,7 +19,7 @@ public class HoldemHandTest {
      * ROYAL FLUSH
      * HIGH
      * STRAIGHT
-     * STRAIGHT FLUSH
+     * STRA,IGHT FLUSH
      */
 
     @Test
