@@ -1,6 +1,8 @@
 
 package TexasHoldem;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import poker.*;
 
@@ -201,10 +203,10 @@ public class RoundOfTexasHoldem {
 		{
 			if(players[button+2].getBank()<BIG_BLIND)
 			//Player does not have enough chips to open
-			System.out.println(players[button+2].getName() + "says: I cannot post the Big Blind. I am All-In");
+				System.out.println(players[button+2].getName() + "says: I cannot post the Big Blind. I am All-In");
 			else if(players[button+2].getBank()<BIG_BLIND)
 			//Player does not have enough chips to open
-			System.out.println(players[button+2].getName() + "says: I can post the Big Blind.");
+				System.out.println(players[button+2].getName() + "says: I can post the Big Blind.");
 		}
 
 
@@ -241,8 +243,8 @@ public class RoundOfTexasHoldem {
 	//TODO: Side bets Showdown
 	public void play(){
 
-		PotTexasHoldem mainPot = new PotTexasHoldem();
-		mainPot.addPlayers(players);
+		List<PlayerInterface> listPlayers = Arrays.asList(players);
+		PotTexasHoldem mainPot = new PotTexasHoldem((ArrayList<PlayerInterface>) listPlayers);
 		pots.add(mainPot);
 
 		// Initialize bank and print the values for each player;
@@ -258,18 +260,18 @@ public class RoundOfTexasHoldem {
 		// Game actions
 		// (call, raise, fold);
 		// Start betting sequence left of the big blind;
-		preflop(stake, numActive, pots.get(pots.size()-1));
+		preflop(stake, numActive,pots.size()-1);
 
 		//Whilst there are >= 2 players are still active;
 		//CHECK?? is also possible (no idea)
-		flop(stake, numActive , pots.get(pots.size()-1));
+		flop(stake, numActive , pots.size()-1);
 
 		// Turn 4th community card (turn) is turned while there are >= 2 players active.
 		//TODO
-		turn(stake, numActive , pots.get(pots.size()-1));
+		turn(stake, numActive , pots.size()-1);
 
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
-		river(stake, numActive , pots.get(pots.size()-1));
+		river(stake, numActive , pots.size()-1);
 
 		//if all players call or fold then it stops and goes to next part
 		//if raise goes through loop again all the players that called not the folded
@@ -294,10 +296,13 @@ public class RoundOfTexasHoldem {
 		}
 	}
 
-	private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
+	//private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
+	private void goAround(Integer playerStart, Integer numActive, int indexCurrPot){
 
-		for (int i = 0; i < pot.getNumPlayers() ; i++) {
-			PlayerInterface currentPlayer = pot.getPlayer((playerStart + i)% pot.getNumPlayers());
+		PotTexasHoldem activePot = pots.get(indexCurrPot);
+
+		for (int i = 0; i < activePot.getNumPlayers() ; i++) {
+			PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i)% activePot.getNumPlayers());
 
 			if (currentPlayer == null || currentPlayer.hasFolded())
 				continue;
@@ -305,36 +310,40 @@ public class RoundOfTexasHoldem {
 			//delay(DELAY_BETWEEN_ACTIONS);
 
 			if (numActive == 1) { //if only one player remains
-				currentPlayer.takePot(pot);
+				currentPlayer.takePot(activePot);
 				System.out.println("\nNo Players left in the game.\n");
 				return;
 			}
 
-			currentPlayer.nextAction(pot);
+			currentPlayer.nextAction(pots, indexCurrPot);
 
 			if (currentPlayer.hasFolded()){ //checks for fold
 				numActive--;
 			}
+
+			if(currentPlayer.isAllIn()){
+				newSidePot(currentPlayer);
+			}
 		}
 	}
 
-	private void preflop(Integer stake, Integer numActive, PotTexasHoldem pot){
+	private void preflop(Integer stake, Integer numActive, int potIndex){
 
 		System.out.println("---PREFLOP---");
 
 
 		int playerStart = button+3;	//3 becouse player left to big blind starts
 
-		while (stake < pot.getCurrentStake() && numActive > 0) {
-			stake = pot.getCurrentStake();
+		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+			stake = pots.get(pots.size()-1).getCurrentStake();
 
-			goAround(playerStart, pot.getNumPlayers(), pot);
+			goAround(playerStart, pots.get(pots.size()-1).getNumPlayers(), potIndex);
 		}
 
 
 	}
 
-	private void flop(Integer stake,Integer numActive, PotTexasHoldem pot){
+	private void flop(Integer stake,Integer numActive, int potIndex){
 
 		System.out.println("---FLOP---");
 
@@ -343,15 +352,15 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		while (stake < pot.getCurrentStake() && numActive > 0) {
-			stake = pot.getCurrentStake();
+		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+			stake = pots.get(pots.size()-1).getCurrentStake();
 
-			goAround(playerStart,  pot.getNumPlayers(), pot);
+			goAround(playerStart,  pots.get(potIndex).getNumPlayers(), potIndex);
 		}
 
 	}
 
-	private void turn(Integer stake,Integer numActive, PotTexasHoldem pot){
+	private void turn(Integer stake,Integer numActive, int potIndex){
 
 		System.out.println("---TURN---");
 
@@ -361,14 +370,14 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		while (stake < pot.getCurrentStake() && numActive > 0) {
-			stake = pot.getCurrentStake();
+		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+			stake = pots.get(pots.size()-1).getCurrentStake();
 
-			goAround(playerStart,  pot.getNumPlayers(), pot);
+			goAround(playerStart, pots.get(potIndex).getNumPlayers(), potIndex);
 		}
 	}
 
-	private void river(Integer stake, Integer numActive, PotTexasHoldem pot){
+	private void river(Integer stake, Integer numActive, int potIndex){
 
 
 		System.out.println("---RIVER---");
@@ -379,10 +388,10 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		while (stake < pot.getCurrentStake() && numActive > 0) {
-			stake = pot.getCurrentStake();
+		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+			stake = pots.get(pots.size()-1).getCurrentStake();
 
-			goAround(playerStart,  pot.getNumPlayers(), pot);
+			goAround(playerStart, pots.get(potIndex).getNumPlayers(), potIndex);
 		}
 
 	}
@@ -397,8 +406,43 @@ public class RoundOfTexasHoldem {
 		//Last person to bet or raise shows their card , unless there was no bet on the final round
 		//in which case the player immediately clockwise from the button shows their cards first
 
+		//TODO - Conor - winner of each pot is best hand of players in pot
 
 	}
+
+	public void newSidePot(PlayerInterface allInPlayer) {
+		//current pot - can only have stake matching all-in player in this pot
+		int currPot = pots.size() - 1;
+		int potMax = allInPlayer.getStake();	//max value allowed for each player in current pot
+		pots.get(currPot).setMaxStake(potMax);
+
+		int overflow = 0;	//remove excess from pot & add to 2nd pot
+		for (PlayerInterface player: pots.get(currPot).getPlayers()) {
+			overflow += player.getStake() - potMax;
+		}
+
+		pots.get(currPot).removeFromPot(overflow);
+
+		//new pot - add excess from previous pot
+		PotTexasHoldem newPot = new PotTexasHoldem(pots.get(currPot).getPlayers());
+		newPot.removePlayer(allInPlayer);
+		newPot.addToPot(overflow);
+		newPot.newPotStake(pots.get(currPot).getCurrentStake());
+		pots.add(newPot);
+
+		//TODO Conor - manage later players within round (not in this method)
+	}
+
+	public int getRoundStake() {	//must match last pot's stake
+		return pots.get(pots.size()-1).getCurrentStake();
+	}
+
+	/*
+	When player goes all-in current pot splits
+	1st pot contains all-in amount from all-in player for each player
+	2nd pot contains each remaining player's stake minus all-in players stake
+	 */
+	//public void allIn(PlayerInterface[] activePlayers,PlayerInterface allInPlayer) {
 
 	// public void play() {
 	// 	PotOfMoney pot = new PotOfMoney();
