@@ -144,7 +144,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 			bank = bank-blindAmt;
 
 		}
-		
+
 		System.out.println("\n> " + getName() + " says: I post " + type + " with "+ blindAmt +" chip!\n");
 		return enough;
 	}
@@ -234,7 +234,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         }
     }
 
-    
+
     @Override
     public void nextAction(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
         PotTexasHoldem pot = pots.get(currPotIndex);

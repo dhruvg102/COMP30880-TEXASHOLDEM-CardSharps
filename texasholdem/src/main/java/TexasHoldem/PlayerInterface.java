@@ -25,9 +25,7 @@ public interface PlayerInterface {
     public boolean shouldOpen(PotOfMoney pot);
     public boolean shouldSee(PotOfMoney pot);
     public boolean shouldRaise(PotOfMoney pot);
-
-    boolean shouldAllIn(PotOfMoney pot);
-
+    public boolean shouldAllIn(PotOfMoney pot);
     public void nextAction(ArrayList<PotTexasHoldem> pots , int currPotIndex);
 
     //Different method to open bet

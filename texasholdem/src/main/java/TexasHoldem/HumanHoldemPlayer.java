@@ -153,7 +153,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
 			bank = bank-blindAmt;
 
 		}
-		
+
 		System.out.println("\n> " + getName() + " says: I post " + type + " with "+ blindAmt +" chip!\n");
 		return enough;
 	}

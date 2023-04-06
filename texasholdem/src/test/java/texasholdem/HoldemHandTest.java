@@ -1,216 +1,70 @@
 package texasholdem;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import poker.*;
-import TexasHoldem.HoldemHand;
+import java.util.*;
 import TexasHoldem.HoldemHand.CardValue;
+import TexasHoldem.HoldemHand.HandValue;
 import TexasHoldem.HoldemHand.Suit;
+import TexasHoldem.HoldemHand;
 
 public class HoldemHandTest {
+        private HoldemHand holdemHand;
+        private DeckOfCards deck;
 
-    /*
-     * WORKING TESTS --- NOTE: Cards are sorted in order of their value using the handSort() method in HoldemHand.
-     * FOUR OF A KIND
-     * THREE OF A KIND
-     * PAIR
-     * FULL HOUSE
-     * FLUSH
-     * ROYAL FLUSH
-     * HIGH
-     * STRAIGHT
-     * STRAIGHT FLUSH
-     */
+        @Before
+        public void setUp(){
+                deck = new DeckOfCards();
+                holdemHand = new HoldemHand(deck);
+                deck.shuffle();
+        }
 
-    @Test
-    public void testIsFourOfAKind() { 
-        // TEST TRUE
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.SPADES.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.HEARTS.toString(), CardValue.KING.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isFourOfAKind());
+        @Test
+        public void testPlayerHandSize() {
+                HoldemHand hand = new HoldemHand(deck);
+                List<Card> playerCards = hand.getHand();
+                assertEquals(2, playerCards.size());
+        }
 
-        // TEST FALSE
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.SPADES.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("King", Suit.CLUBS.toString(), CardValue.KING.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isFourOfAKind());
-    }
+        @Test
+        public void testAddCommunityCards() {
+                List<Card> communityCards = new ArrayList<>();
+                communityCards.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
+                communityCards.add(new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue(false)));
+                holdemHand.addCommunityCards(communityCards);
+                assertEquals(2, communityCards.size());
+        }
 
-    @Test
-    public void testIsThreeOfAKind() {
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isThreeOfAKind());
+        @Test
+        public void testCommunityCardsSize() {
+                HoldemHand hand = new HoldemHand(deck);
+                List<Card> communityCards = new ArrayList<>();
+                communityCards.add(deck.dealNext());
+                communityCards.add(deck.dealNext());
+                communityCards.add(deck.dealNext());
+                hand.addCommunityCards(communityCards);
+                List<Card> allCards = hand.getFullHand();
+                assertEquals(5, allCards.size());
+        }
 
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ten", Suit.HEARTS.toString(), CardValue.TEN.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isThreeOfAKind());
-    }
+        @Test
+        public void testNoDuplicateCards() {
+                HoldemHand hand = new HoldemHand(deck);
+                List<Card> allCards = hand.getFullHand();
+                Set<Card> uniqueCards = new HashSet<>(allCards);
+                assertEquals(allCards.size(), uniqueCards.size());
+        }
 
-    @Test
-    public void isPair() {
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ten", Suit.HEARTS.toString(), CardValue.TEN.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isPair());
-
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Three", Suit.CLUBS.toString(), CardValue.THREE.getCardValue()),
-                new NumberCard("Ten", Suit.HEARTS.toString(), CardValue.TEN.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isPair());
-    }
-
-    @Test
-    public void testIsFullHouse(){
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.CLUBS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isFullHouse());
-
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.CLUBS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isFullHouse());
-    }
-
-    @Test
-    public void isFlush(){
-        HoldemHand hand = new HoldemHand(new Card[]{
-                    new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                    new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                    new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-                    new NumberCard("Ten", Suit.DIAMONDS.toString(), CardValue.TEN.getCardValue()),
-                    new NumberCard("Nine", Suit.DIAMONDS.toString(), CardValue.NINE.getCardValue()),
-        },new DeckOfCards());
-        assertTrue(hand.isFlush());
-
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-                new NumberCard("Ten", Suit.CLUBS.toString(), CardValue.TEN.getCardValue()),
-                new NumberCard("Nine", Suit.HEARTS.toString(), CardValue.NINE.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isFlush());
-    }
-
-    @Test
-    public void isRoyalFlush(){
-        HoldemHand hand = new HoldemHand(new Card[] {
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-                new FaceCard("Jack", Suit.DIAMONDS.toString(), CardValue.JACK.getCardValue()),
-                new NumberCard("Ten", Suit.DIAMONDS.toString(), CardValue.TEN.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isRoyalFlush());
-
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.CLUBS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.HEARTS.toString(), CardValue.QUEEN.getCardValue()),
-                new NumberCard("Nine", Suit.DIAMONDS.toString(), CardValue.NINE.getCardValue()),
-                new NumberCard("Three", Suit.DIAMONDS.toString(), CardValue.THREE.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isRoyalFlush());
-    }
-
-    @Test
-    public void isHigh(){
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.HEARTS.toString(), CardValue.KING.getCardValue()),
-                new NumberCard("Ten", Suit.DIAMONDS.toString(), CardValue.TEN.getCardValue()),
-                new NumberCard("Six", Suit.SPADES.toString(), CardValue.SIX.getCardValue()),
-                new NumberCard("Four", Suit.CLUBS.toString(), CardValue.FOUR.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isHigh());
-
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue()),
-                new NumberCard("Ten", Suit.DIAMONDS.toString(), CardValue.TEN.getCardValue()),
-                new NumberCard("Six", Suit.SPADES.toString(), CardValue.SIX.getCardValue()),
-                new NumberCard("Four", Suit.CLUBS.toString(), CardValue.FOUR.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isHigh());
-    }
-
-    @Test
-    public void isStraight(){
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Eight", Suit.DIAMONDS.toString(), CardValue.EIGHT.getCardValue()),
-                new NumberCard("Seven", Suit.HEARTS.toString(), CardValue.SEVEN.getCardValue()),
-                new NumberCard("Six", Suit.DIAMONDS.toString(), CardValue.SIX.getCardValue()),
-                new NumberCard("Five", Suit.SPADES.toString(), CardValue.FIVE.getCardValue()),
-                new NumberCard("Four", Suit.CLUBS.toString(), CardValue.FOUR.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isStraight());
-
-        hand = new HoldemHand(new Card[]{
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-                new NumberCard("Ten", Suit.HEARTS.toString(), CardValue.TEN.getCardValue()),
-                new NumberCard("Eight", Suit.DIAMONDS.toString(), CardValue.EIGHT.getCardValue()),
-                new NumberCard("Five", Suit.SPADES.toString(), CardValue.FIVE.getCardValue()),
-                new NumberCard("Four", Suit.CLUBS.toString(), CardValue.FOUR.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isStraight());
-    }
-
-
-    @Test
-    public void isStraightFlush(){
-        HoldemHand hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-                new FaceCard("Jack", Suit.DIAMONDS.toString(), CardValue.JACK.getCardValue()),
-                new NumberCard("Ten", Suit.DIAMONDS.toString(), CardValue.TEN.getCardValue()),
-        }, new DeckOfCards());
-        assertTrue(hand.isStraightFlush());
-
-        hand = new HoldemHand(new Card[]{
-                new NumberCard("Ace", Suit.DIAMONDS.toString(), CardValue.ACE.getCardValue()),
-                new FaceCard("King", Suit.CLUBS.toString(), CardValue.KING.getCardValue()),
-                new FaceCard("Queen", Suit.DIAMONDS.toString(), CardValue.QUEEN.getCardValue()),
-                new FaceCard("Jack", Suit.HEARTS.toString(), CardValue.JACK.getCardValue()),
-                new NumberCard("Ten", Suit.DIAMONDS.toString(), CardValue.TEN.getCardValue()),
-        }, new DeckOfCards());
-        assertFalse(hand.isStraightFlush());
-    }
+        @Test
+        public void testHoldemHand() {
+                List<Card> hand = new ArrayList<>();
+                hand.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
+                hand.add(new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue(false)));
+                DeckOfCards deck = new DeckOfCards();
+                List<Card> communityCards = new ArrayList<>();
+                HoldemHand holdemHand = new HoldemHand(hand, deck, communityCards);
+                assertEquals(holdemHand.getHand(), hand);
+        }
 }

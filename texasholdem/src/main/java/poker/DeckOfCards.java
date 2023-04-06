@@ -102,8 +102,7 @@ public class DeckOfCards {
 	}
 
 	public HoldemHand dealHoldemHand(){
-		HoldemHand hand = new HoldemHand(this);
-		return hand;
+		return new HoldemHand(this);
 	}
 
 	//--------------------------------------------------------------------//
