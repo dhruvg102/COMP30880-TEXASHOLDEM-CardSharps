@@ -122,16 +122,16 @@ public class HoldemHand {
 
     public HoldemHand(List<Card> hand, DeckOfCards deck, List<Card> communityCards){
         this.playerHand = hand; //init playerHand
-        this.deck = deck; //init deck
         this.communityCards = communityCards;
+        this.deck = deck; //init deck
     }
 
     public HoldemHand(DeckOfCards deck){
         this.deck = deck;
         this.playerHand = new ArrayList<>();
+        this.playerHand.add(deck.dealNext()); //community card 1...
         this.playerHand.add(deck.dealNext());
-        this.playerHand.add(deck.dealNext());
-        this.communityCards = new ArrayList<>();
+        this.communityCards = new ArrayList<>(); //need to add the two cards added to player
     }
 
 
@@ -203,12 +203,16 @@ public class HoldemHand {
 
 
     public void sortHand() {
-        playerHand.sort(Collections.reverseOrder());
+        //playerHand.sort(Collections.reverseOrder());
+        Collections.sort(playerHand, Collections.reverseOrder()); // descending order, maybe need to sort by value
+                                                                  // instead? I think this does by name
     }
 
 
     public int getRiskWorthiness(){ //We override this value for specific hands such as Straight, FullHouse etc..
         return DEFAULT_RISK; //TODO - Change to enum with setter inside
+
+        //use evaluate hand and return value in enum based on the card evaluation, e.g if royal flush return RiskWorthiness.ROYALFLUSH_RISK
     }
 
 
@@ -243,9 +247,9 @@ public class HoldemHand {
             return null;
     }
 
-    /* public List<Card> getCommunityCards(){
+    public List<Card> getCommunityCards(){ //may make things easier with this
         return communityCards;
-    } */
+    }
 
     public int getValue(){
         return getCard(0).getValue(); // simply return the value of the higest card
@@ -263,7 +267,7 @@ public class HoldemHand {
     }
 
 
-    //Hand Classifiers
+    //Hand Classifiers TODO: Ensure this works on implmentation of game - may need to fix sort to cardvalue!
     public boolean isFourOfAKind() {
         sortHand();
         /*
