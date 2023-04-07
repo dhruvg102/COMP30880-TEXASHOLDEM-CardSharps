@@ -192,6 +192,8 @@ public class HoldemHand {
             return HandValue.STRAIGHT_VALUE.getHandValue() + hand.get(4).getValue();
         } else if (isThreeOfAKind()){
             return HandValue.THREES_VALUE.getHandValue() + hand.get(2).getValue();
+        } else if (isPair()){ //added pair
+            return HandValue.PAIR_VALUE.getHandValue() + hand.get(2).getValue();
         } else {
             int value = 0;
             for (int i = 0; i < 5; i++){
@@ -294,7 +296,7 @@ public class HoldemHand {
             if (playerHand.get(i).getValue() == playerHand.get(i - 1).getValue() - 1) {
                 count++;
             } else if (playerHand.get(i).getValue() == playerHand.get(i - 1).getValue()) {
-                continue;
+                continue; //this may break stuff as there is no condition (e.g get stuck here)
             } else if (isAceLow && playerHand.get(i).getValue() == CardValue.FIVE.getCardValue()) {
                 count++;
             } else {
