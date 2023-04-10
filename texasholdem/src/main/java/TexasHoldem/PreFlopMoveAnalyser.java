@@ -93,24 +93,19 @@ public class PreFlopMoveAnalyser {
 
     /*
     TODO: Calculate adjusted player stage based on number of players
-        -Late = dealer and dealer - 1 (overrides early stage)
+        -Late = dealer and dealer - 1 or 2? (overrides early stage)
         -Early = blinds and 1 post-blind
         -Middle = everyone else
      */
     private player_stage getPlayerStage() {
         switch (player_position) {
             case 1:
-                return player_stage.EARLY;
             case 2:
                 return player_stage.EARLY;
             case 3:
-                return player_stage.MIDDLE;
-            case 4:
-                return player_stage.MIDDLE;
             case 5:
-                return player_stage.MIDDLE;
+            case 4:
             case 6:
-                return player_stage.MIDDLE;
             case 7:
                 return player_stage.MIDDLE;
             default:
@@ -146,7 +141,12 @@ public class PreFlopMoveAnalyser {
         return raise;
     }
 
+    //TODO unsure if this weakens the purpose of matrices
+    public boolean shouldSee() {
+        return getHandRank() <= 8;
+    }
+
     public boolean shouldFold() {
-        return !(shouldRaise());
+        return !(shouldRaise() || shouldSee());
     }
 }
