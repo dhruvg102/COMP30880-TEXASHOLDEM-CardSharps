@@ -276,7 +276,6 @@ public class RoundOfTexasHoldem {
 		flop(stake, numActive , pots.size()-1);
 
 		// Turn 4th community card (turn) is turned while there are >= 2 players active.
-		//TODO
 		turn(stake, numActive , pots.size()-1);
 
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
@@ -386,12 +385,13 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+3;	//3 becouse player left to big blind starts
 
-		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+		bettingCycle(playerStart);
+		/*while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
 			stake = pots.get(pots.size()-1).getCurrentStake();
 
 			//goAround(playerStart, pots.get(pots.size()-1).getNumPlayers(), potIndex);
-			bettingCycle(playerStart);
-		}
+
+		}*/
 
 
 	}
@@ -472,7 +472,6 @@ public class RoundOfTexasHoldem {
 
 	}
 
-	//TODO Conor - does this actually work?
 	public void addSidePot(PlayerInterface allInPlayer, int indexCurrPot) {
 		for (PlayerInterface otherPlayer: pots.get(indexCurrPot).getPlayers()) {
 			if(otherPlayer.isAllIn() && !Objects.equals(otherPlayer.getName(), allInPlayer.getName())){
@@ -520,54 +519,6 @@ public class RoundOfTexasHoldem {
 	public int getRoundStake() {	//must match last pot's stake
 		return pots.get(pots.size()-1).getCurrentStake();
 	}
-
-	/*
-	When player goes all-in current pot splits
-	1st pot contains all-in amount from all-in player for each player
-	2nd pot contains each remaining player's stake minus all-in players stake
-	 */
-	//public void allIn(PlayerInterface[] activePlayers,PlayerInterface allInPlayer) {
-
-	// public void play() {
-	// 	PotOfMoney pot = new PotOfMoney();
-	// 	int numActive = getNumActivePlayers();
-	// 	int stake = -1;
-	// 	PlayerInterface currentPlayer = null;
-	// 	deck.reset();
-
-	// 	// while the stakes are getting bigger and there is at least one active player,
-	// 	// then continue to go around the table and play
-
-	// 	while (stake < pot.getCurrentStake() && numActive > 0) {
-	// 		stake = pot.getCurrentStake();
-
-	// 		for (int i = 0; i < getNumPlayers(); i++) {
-	// 			currentPlayer = getPlayer(i);
-
-	// 			if (currentPlayer == null || currentPlayer.hasFolded())
-	// 				continue;
-
-	// 			//delay(DELAY_BETWEEN_ACTIONS);
-
-	// 			if (numActive == 1) { //if only one player remains
-	// 				currentPlayer.takePot(pot);
-	// 				System.out.println("\nNo Players left in the game.\n");
-	// 				return;
-	// 			}
-
-	// 			currentPlayer.nextAction(pot);
-
-	// 			if (currentPlayer.hasFolded()){ //checks for fold
-	// 				numActive--;
-	// 			}
-	// 		}
-	// 	}
-
-	// 	PlayerInterface bestPlayer = getPlayer(getNumBestPlayer(true));
-	// 	if (bestPlayer != null)
-	// 		bestPlayer.takePot(pot);
-	// }
-
 	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -575,9 +526,9 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 
-	/* private void delay(int numMilliseconds) {
+	private void delay(int numMilliseconds) {
 		try {
 			Thread.sleep(numMilliseconds);
 		} catch (Exception e) {}
-	} */
+	}
 }  
