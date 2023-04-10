@@ -145,7 +145,7 @@ public class HoldemHand {
         List<Card> cards = new ArrayList<>();
 
         cards.addAll(playerHand);
-        
+
         if(communityCards!=null)
             cards.addAll(communityCards);
         
@@ -426,31 +426,7 @@ public class HoldemHand {
 
     public static void main(String[] args) {
         
-                
-        List<Card> handX = new ArrayList<>();
-        handX.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
-        handX.add(new NumberCard("Four", Suit.DIAMONDS.toString(), CardValue.FOUR.getCardValue(false)));
-        handX.add(new NumberCard("Three", Suit.DIAMONDS.toString(), CardValue.THREE.getCardValue(false)));
-        handX.add(new NumberCard("Deuce", Suit.DIAMONDS.toString(), CardValue.DEUCE.getCardValue(false)));
-        handX.add(new NumberCard("Eigth", Suit.DIAMONDS.toString(), CardValue.EIGHT.getCardValue(false)));
-        handX.add(new NumberCard("Five", Suit.DIAMONDS.toString(), CardValue.FIVE.getCardValue(false)));
-
-        /*
-         * 
-         *  A - 2- 3- 4- 5
-         * 
-         */
-        
-
-        DeckOfCards deck = new DeckOfCards();
-        
-        HoldemHand newHand =  new HoldemHand(handX, deck, null);
-
-        
-        
-       
-        System.out.println(newHand.getBestHand().toString());
-
+    
         // for(int i=0;i<24;i++){
         //     newHand.generatePossibleHands().get(i).toString();
         //     System.out.print("\t");
