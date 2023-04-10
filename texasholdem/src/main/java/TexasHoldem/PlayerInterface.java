@@ -2,6 +2,7 @@ package TexasHoldem;
 import poker.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface PlayerInterface {
     public void reset();
@@ -16,6 +17,7 @@ public interface PlayerInterface {
     public int getAllInAddition();
     //public void reorganizeHand();
     public void dealTo(DeckOfCards deck);
+    public void addCommunityCards(List<Card> card);
     public void takePot(PotOfMoney pot);
     public void fold();
     public void openBetting(PotOfMoney pot);

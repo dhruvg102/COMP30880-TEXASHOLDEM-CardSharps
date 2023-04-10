@@ -67,4 +67,5 @@ public class HoldemHandTest {
                 HoldemHand holdemHand = new HoldemHand(hand, deck, communityCards);
                 assertEquals(holdemHand.getHand(), hand);
         }
+    
 }
