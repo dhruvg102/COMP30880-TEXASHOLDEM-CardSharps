@@ -12,11 +12,23 @@ package TexasHoldem;
 
 public class PreFlopMoveAnalyser {
     private static char ERROR_MOVE = 0; //error, indicates erroneous hand values
+
     private char[][] SUITED_PRE_FLOP_DECISION_MATRIX; //If card pair is of same suit
+
     private char[][] OFFSUIT_PRE_FLOP_DECISION_MATRIX; //If card pair is not of same suit
 
+    private int player_position;
+
+    private int number_of_players;
+
+    private HoldemHand hand;
+
     //constructor
-    public PreFlopMoveAnalyser(){
+    public PreFlopMoveAnalyser(int player_position, int number_of_players, HoldemHand hand){
+
+        this.player_position = player_position;
+        this.number_of_players = number_of_players;
+        this.hand = hand;
 
         //If card pair is of same suit
         SUITED_PRE_FLOP_DECISION_MATRIX = new char[][]{
@@ -59,5 +71,18 @@ public class PreFlopMoveAnalyser {
                 {'0','0','9','9','9','9','9','9','9','8','6','5','3','1','2'}, //second card value = 13 (King)
                 {'0','0','9','9','9','9','9','9','9','8','6','4','4','2','1'}, //second card value = 14 (Ace)
         };
+    }
+
+    private int getHandRank() {
+        if(hand.getCard(0).getSuit() == hand.getCard(1).getSuit()) {
+            return SUITED_PRE_FLOP_DECISION_MATRIX[hand.getCard(0).getValue()][hand.getCard(1).getValue()];
+        }
+        else {
+            return OFFSUIT_PRE_FLOP_DECISION_MATRIX[hand.getCard(0).getValue()][hand.getCard(1).getValue()];
+        }
+    }
+
+    public boolean shouldFold() {
+        return getHandRank() == 9;
     }
 }
