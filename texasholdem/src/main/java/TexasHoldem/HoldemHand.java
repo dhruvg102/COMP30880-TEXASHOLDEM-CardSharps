@@ -145,7 +145,9 @@ public class HoldemHand {
         List<Card> cards = new ArrayList<>();
 
         cards.addAll(playerHand);
-        //cards.addAll(communityCards);
+        
+        if(communityCards!=null)
+            cards.addAll(communityCards);
         
 
         List<List<Card>> possibleHands = generatePossibleHands(cards);
