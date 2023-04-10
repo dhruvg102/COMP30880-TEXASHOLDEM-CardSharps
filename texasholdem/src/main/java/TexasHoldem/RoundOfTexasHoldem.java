@@ -308,7 +308,7 @@ public class RoundOfTexasHoldem {
 	//
 
 	//private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
-	private void goAround(Integer playerStart, Integer numActive, int indexCurrPot){
+	/*private void goAround(Integer playerStart, Integer numActive, int indexCurrPot){
 
 		PotTexasHoldem activePot = pots.get(indexCurrPot);
 
@@ -337,11 +337,13 @@ public class RoundOfTexasHoldem {
 				addSidePot(currentPlayer, indexCurrPot);
 			}
 		}
-	}
+	}*/
 
-	public void bettingCycle(int numActive, int playerStart) {
+	public void bettingCycle(int playerStart) {
 		int indexCurrPot = pots.size()-1;
 		int stake = pots.get(pots.size()-1).getCurrentStake();
+		int numActive = pots.get(pots.size()-1).getNumPlayers();
+
 		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
 			stake = pots.get(pots.size() - 1).getCurrentStake();
 
@@ -387,7 +389,8 @@ public class RoundOfTexasHoldem {
 		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
 			stake = pots.get(pots.size()-1).getCurrentStake();
 
-			goAround(playerStart, pots.get(pots.size()-1).getNumPlayers(), potIndex);
+			//goAround(playerStart, pots.get(pots.size()-1).getNumPlayers(), potIndex);
+			bettingCycle(playerStart);
 		}
 
 
@@ -402,11 +405,13 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+
+		bettingCycle(playerStart);
+		/*while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
 			stake = pots.get(pots.size()-1).getCurrentStake();
 
-			goAround(playerStart,  pots.get(potIndex).getNumPlayers(), potIndex);
-		}
+			//goAround(playerStart,  pots.get(potIndex).getNumPlayers(), potIndex);
+		}*/
 
 	}
 
@@ -420,11 +425,12 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+		bettingCycle(playerStart);
+		/*while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
 			stake = pots.get(pots.size()-1).getCurrentStake();
 
 			goAround(playerStart, pots.get(potIndex).getNumPlayers(), potIndex);
-		}
+		}*/
 	}
 
 	private void river(Integer stake, Integer numActive, int potIndex){
@@ -438,15 +444,16 @@ public class RoundOfTexasHoldem {
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+		bettingCycle(playerStart);
+		/*while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
 			stake = pots.get(pots.size()-1).getCurrentStake();
 
 			goAround(playerStart, pots.get(potIndex).getNumPlayers(), potIndex);
-		}
+		}*/
 
 	}
 
-	private void showdown(PotOfMoney pot){
+	private void showdown(){
 
 		System.out.println("---SHOWDOWN---");
 
@@ -457,6 +464,11 @@ public class RoundOfTexasHoldem {
 		//in which case the player immediately clockwise from the button shows their cards first
 
 		//TODO Conor - winner of each pot is best hand of players in pot
+		for (PotTexasHoldem pot: pots) {
+			for (PlayerInterface player: pot.getPlayers()) {
+				players[getNumBestPlayer(true)].takePot(pot);
+			}
+		}
 
 	}
 
