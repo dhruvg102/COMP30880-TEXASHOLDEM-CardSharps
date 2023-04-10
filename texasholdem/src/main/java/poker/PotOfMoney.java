@@ -58,7 +58,11 @@ public class PotOfMoney
 		
 		addToPot(addition);
 	}
-	
+
+	public void addStake(int newStake) {
+		addToPot(newStake - stake);
+		stake = newStake;
+	}
 	
 	public void addToPot(int addition) {
 		total += addition;
