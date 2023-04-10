@@ -3,6 +3,7 @@ package TexasHoldem;
 import poker.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HumanHoldemPlayer implements PlayerInterface {
 
@@ -105,6 +106,12 @@ public class HumanHoldemPlayer implements PlayerInterface {
     public void dealTo(DeckOfCards deck) {
         hand = deck.dealHoldemHand();
     }
+
+    @Override
+    public void addCommunityCards(List<Card> cards){
+        this.hand.addCommunityCards(cards);
+    }
+
 
     @Override
     public void takePot(PotOfMoney pot) {

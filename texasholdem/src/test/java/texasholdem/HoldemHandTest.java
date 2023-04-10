@@ -67,4 +67,23 @@ public class HoldemHandTest {
                 HoldemHand holdemHand = new HoldemHand(hand, deck, communityCards);
                 assertEquals(holdemHand.getHand(), hand);
         }
+
+        @Test
+        public void testIsStraight(){
+                            
+        List<Card> handX = new ArrayList<>();
+        handX.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
+        handX.add(new NumberCard("Four", Suit.DIAMONDS.toString(), CardValue.FOUR.getCardValue(false)));
+        handX.add(new NumberCard("Three", Suit.DIAMONDS.toString(), CardValue.THREE.getCardValue(false)));
+        handX.add(new NumberCard("Deuce", Suit.DIAMONDS.toString(), CardValue.DEUCE.getCardValue(false)));
+        handX.add(new NumberCard("Eigth", Suit.DIAMONDS.toString(), CardValue.EIGHT.getCardValue(false)));
+        handX.add(new NumberCard("Five", Suit.DIAMONDS.toString(), CardValue.FIVE.getCardValue(false)));
+        DeckOfCards deck = new DeckOfCards();
+        
+        HoldemHand newHand =  new HoldemHand(handX, deck, null);
+
+        String result = "[(Ace of Hearts), (Deuce of Diamonds), (Three of Diamonds), (Four of Diamonds), (Five of Diamonds)]";
+        assertEquals(result,newHand.getBestHand().toString());
+        }
+    
 }
