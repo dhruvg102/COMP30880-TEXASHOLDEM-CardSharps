@@ -209,6 +209,13 @@ public class RoundOfTexasHoldem {
 
 
 	}
+	// public boolean canOpen() {
+	// 	HoldemHand hand = getPlayer(getNumBestPlayer(false)).getHand();
+	// 	if (hand.isHigh()) // not good enough
+	// 		return false;
+	// 	else
+	// 		return true;
+	// }
 
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -226,11 +233,6 @@ public class RoundOfTexasHoldem {
 			
 			if (player == null || player.isBankrupt()) 
 				continue;
-			
-			if (player.getHand() instanceof High) //TODO - This doesnt apply to texasHoldem
-				System.out.println("> " + player.getName() + " says: I cannot open.");
-			else
-				System.out.println("> " + player.getName() + " says: I can open.");
 		}
 	}
 	
