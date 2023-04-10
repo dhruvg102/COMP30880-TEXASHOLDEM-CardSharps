@@ -17,17 +17,26 @@ public class PreFlopMoveAnalyser {
 
     private char[][] OFFSUIT_PRE_FLOP_DECISION_MATRIX; //If card pair is not of same suit
 
+    private enum player_stage {
+        EARLY,
+        MIDDLE,
+        LATE
+    }
+
     private int player_position;
 
     private int number_of_players;
 
+    private boolean isFirstToBet;
+
     private HoldemHand hand;
 
     //constructor
-    public PreFlopMoveAnalyser(int player_position, int number_of_players, HoldemHand hand){
+    public PreFlopMoveAnalyser(int player_position, int number_of_players, boolean isFirstToBet, HoldemHand hand){
 
         this.player_position = player_position;
         this.number_of_players = number_of_players;
+        this.isFirstToBet = isFirstToBet;
         this.hand = hand;
 
         //If card pair is of same suit
@@ -82,7 +91,62 @@ public class PreFlopMoveAnalyser {
         }
     }
 
+    /*
+    TODO: Calculate adjusted player stage based on number of players
+        -Late = dealer and dealer - 1 (overrides early stage)
+        -Early = blinds and 1 post-blind
+        -Middle = everyone else
+     */
+    private player_stage getPlayerStage() {
+        switch (player_position) {
+            case 1:
+                return player_stage.EARLY;
+            case 2:
+                return player_stage.EARLY;
+            case 3:
+                return player_stage.MIDDLE;
+            case 4:
+                return player_stage.MIDDLE;
+            case 5:
+                return player_stage.MIDDLE;
+            case 6:
+                return player_stage.MIDDLE;
+            case 7:
+                return player_stage.MIDDLE;
+            default:
+                return player_stage.LATE;
+        }
+    }
+
+    public boolean shouldRaise() {
+        int handRank = getHandRank();
+        boolean raise = false;
+
+        switch (handRank) {
+            case 5:
+                if(getPlayerStage() == player_stage.MIDDLE || getPlayerStage() == player_stage.LATE) {
+                    raise = true;
+                }
+            case 6:
+                if(getPlayerStage() == player_stage.LATE) {
+                    raise = true;
+                }
+            case 7:
+                if(getPlayerStage() == player_stage.LATE && isFirstToBet) {
+                    raise = true;
+                }
+            case 8:
+                raise = false;
+            case 9:
+                raise = false;
+            default:
+                raise = true;
+        }
+
+        return raise;
+    }
+
     public boolean shouldFold() {
-        return getHandRank() == 9;
+        return !(shouldRaise());
     }
 }
