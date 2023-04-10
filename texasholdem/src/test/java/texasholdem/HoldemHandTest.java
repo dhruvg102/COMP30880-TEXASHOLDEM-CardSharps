@@ -31,7 +31,7 @@ public class HoldemHandTest {
         @Test
         public void testAddCommunityCards() {
                 List<Card> communityCards = new ArrayList<>();
-                communityCards.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
+                communityCards.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(true)));
                 communityCards.add(new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue(false)));
                 holdemHand.addCommunityCards(communityCards);
                 assertEquals(2, communityCards.size());

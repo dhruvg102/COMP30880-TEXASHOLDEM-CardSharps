@@ -155,7 +155,6 @@ public class HoldemHand {
     }
 
     public List<List<Card>> generatePossibleHands(){        //TODO possible create seperate communityHand which is passed
-        //hand = HoldemHand + communityCards
         List<List<Card>> possibleHands = new ArrayList<>(); //store possible hands
         for (int i = 0; i < playerHand.size() - 1; i++) { //iterates through all cards except for last
             for (int j = i + 1; j < playerHand.size(); j++) { //iterates all cards in players hand after current card in outer loop (ensure theres 2 cards)
@@ -172,7 +171,6 @@ public class HoldemHand {
         }
         return possibleHands;
     }
-
 
     public int evaluateHand(List<Card> hand) {
         sortHand();
@@ -194,6 +192,8 @@ public class HoldemHand {
             return HandValue.STRAIGHT_VALUE.getHandValue() + hand.get(4).getValue();
         } else if (isThreeOfAKind()){
             return HandValue.THREES_VALUE.getHandValue() + hand.get(2).getValue();
+        } else if (isPair()){ //added pair
+            return HandValue.PAIR_VALUE.getHandValue() + hand.get(2).getValue();
         } else {
             int value = 0;
             for (int i = 0; i < 5; i++){
@@ -205,19 +205,16 @@ public class HoldemHand {
 
 
     public void sortHand() {
-        /*playerHand.sort(Collections.reverseOrder());*/
-        Card[] cardArray = playerHand.toArray(new Card[0]);
-        Arrays.sort(cardArray, new Comparator<Card>(){
-            @Override
-            public int compare(Card card1, Card card2){
-                return Integer.compare(card2.getValue(), card1.getValue()); // sort in descending order
-            }
-        });
+        //playerHand.sort(Collections.reverseOrder());
+        Collections.sort(playerHand, Collections.reverseOrder()); // descending order, maybe need to sort by value
+                                                                  // instead? I think this does by name
     }
 
 
     public int getRiskWorthiness(){ //We override this value for specific hands such as Straight, FullHouse etc..
         return DEFAULT_RISK; //TODO - Change to enum with setter inside
+
+        //use evaluate hand and return value in enum based on the card evaluation, e.g if royal flush return RiskWorthiness.ROYALFLUSH_RISK
     }
 
 
@@ -252,9 +249,9 @@ public class HoldemHand {
             return null;
     }
 
-    /* public List<Card> getCommunityCards(){
+    public List<Card> getCommunityCards(){ //may make things easier with this
         return communityCards;
-    } */
+    }
 
     public int getValue(){
         return getCard(0).getValue(); // simply return the value of the higest card
@@ -272,7 +269,7 @@ public class HoldemHand {
     }
 
 
-    //Hand Classifiers
+    //Hand Classifiers TODO: Ensure this works on implmentation of game - may need to fix sort to cardvalue!
     public boolean isFourOfAKind() {
         sortHand();
         /*
@@ -299,7 +296,7 @@ public class HoldemHand {
             if (playerHand.get(i).getValue() == playerHand.get(i - 1).getValue() - 1) {
                 count++;
             } else if (playerHand.get(i).getValue() == playerHand.get(i - 1).getValue()) {
-                continue;
+                continue; //this may break stuff as there is no condition (e.g get stuck here)
             } else if (isAceLow && playerHand.get(i).getValue() == CardValue.FIVE.getCardValue()) {
                 count++;
             } else {
@@ -345,7 +342,7 @@ public class HoldemHand {
          * || card 2 == card 4
          * || card 3 == card 5
          */
-        
+
         sortHand();
         return playerHand.get(0).getValue() == playerHand.get(2).getValue()
                 || playerHand.get(1).getValue() == playerHand.get(3).getValue()
