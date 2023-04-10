@@ -192,12 +192,20 @@ abstract class Player {
 			bank = bank-blindAmt;
 
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 983009f0e61ae43de297a7bd1ffde7a2047dfeca
 		System.out.println("\n> " + getName() + " says: I post " + type + " with "+ blindAmt +" chip!\n");
 		return enough;
 	}
 
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 983009f0e61ae43de297a7bd1ffde7a2047dfeca
 	public void seeBet(PotOfMoney pot) {
 		int needed  = pot.getCurrentStake() - getStake();
 		

@@ -122,16 +122,16 @@ public class HoldemHand {
 
     public HoldemHand(List<Card> hand, DeckOfCards deck, List<Card> communityCards){
         this.playerHand = hand; //init playerHand
-        this.communityCards = communityCards;
         this.deck = deck; //init deck
+        this.communityCards = communityCards;
     }
 
     public HoldemHand(DeckOfCards deck){
         this.deck = deck;
         this.playerHand = new ArrayList<>();
-        this.playerHand.add(deck.dealNext()); //community card 1...
         this.playerHand.add(deck.dealNext());
-        this.communityCards = new ArrayList<>(); //need to add the two cards added to player
+        this.playerHand.add(deck.dealNext());
+        this.communityCards = new ArrayList<>();
     }
 
 
@@ -154,7 +154,7 @@ public class HoldemHand {
         return bestHand;
     }
 
-    public List<List<Card>> generatePossibleHands(){
+    public List<List<Card>> generatePossibleHands(){        //TODO possible create seperate communityHand which is passed
         List<List<Card>> possibleHands = new ArrayList<>(); //store possible hands
         for (int i = 0; i < playerHand.size() - 1; i++) { //iterates through all cards except for last
             for (int j = i + 1; j < playerHand.size(); j++) { //iterates all cards in players hand after current card in outer loop (ensure theres 2 cards)
@@ -315,6 +315,7 @@ public class HoldemHand {
         }
         return true;
     }
+
     public boolean isStraightFlush(){ //returns true if hand is both a flush and a straight
         return isFlush() && isStraight();
     }
@@ -341,6 +342,7 @@ public class HoldemHand {
          * || card 2 == card 4
          * || card 3 == card 5
          */
+
         sortHand();
         return playerHand.get(0).getValue() == playerHand.get(2).getValue()
                 || playerHand.get(1).getValue() == playerHand.get(3).getValue()

@@ -1,14 +1,17 @@
 package TexasHoldem;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import poker.PotOfMoney;
 
 public class PotTexasHoldem extends PotOfMoney{
     
     private ArrayList<PlayerInterface> players;
+    int maxStake = Integer.MAX_VALUE;       //no max until a player goes all-in
     
-    public PotTexasHoldem(){
-        players = new ArrayList<PlayerInterface>();
+    public PotTexasHoldem(ArrayList<PlayerInterface> potPlayers){
+        players = potPlayers;
     }
     
     public int getNumPlayers(){
@@ -41,4 +44,25 @@ public class PotTexasHoldem extends PotOfMoney{
         }
     }
 
+    public void removeFromPot(int subtraction) {
+        addToPot( -subtraction);
+    }
+
+    public void setTotal(int amount) {
+        clearPot();
+        addToPot(amount);
+    }
+
+    public int getMaxStake() {
+        return maxStake;
+    }
+
+    public void setMaxStake(int maxStake) {
+        this.maxStake = maxStake;
+    }
+
+    public void newPotStake(int stake) {
+        raiseStake(stake);
+        removeFromPot(stake);
+    }
 }

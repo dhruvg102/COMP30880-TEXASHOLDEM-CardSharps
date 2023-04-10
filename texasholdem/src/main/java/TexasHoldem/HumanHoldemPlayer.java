@@ -2,6 +2,8 @@ package TexasHoldem;
 
 import poker.*;
 
+import java.util.ArrayList;
+
 public class HumanHoldemPlayer implements PlayerInterface {
 
     private int bank       		= 0;		 // the total amount of money the player has left, not counting his/her
@@ -14,6 +16,8 @@ public class HumanHoldemPlayer implements PlayerInterface {
     private HoldemHand hand 		= null;      // the hand dealt to this player
 
     private boolean folded 		= false;     // set to true when the player folds (gives up)
+    private boolean allIn       = false;
+    private int allInAddition   = 0;
 
 
 
@@ -83,6 +87,15 @@ public class HumanHoldemPlayer implements PlayerInterface {
         return folded;
     }
 
+    @Override
+    public boolean isAllIn() {
+        return allIn;
+    }
+
+    public int getAllInAddition() {
+        return allInAddition;
+    }
+
     /* @Override
     public void reorganizeHand() {
         hand = hand.categorize();
@@ -146,14 +159,14 @@ public class HumanHoldemPlayer implements PlayerInterface {
 			bank = bank-blindAmt;
 
 		}
-		
+
 		System.out.println("\n> " + getName() + " says: I post " + type + " with "+ blindAmt +" chip!\n");
 		return enough;
 	}
 
     @Override
-    public void seeBet(PotOfMoney pot) {
-        int needed  = pot.getCurrentStake() - getStake();
+    public void seeBet(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
+        int needed  = pots.get(pots.size()-1).getCurrentStake() - getStake();   //stake last pot
 
         if (needed == 0 || needed > getBank())
             return;
@@ -161,23 +174,44 @@ public class HumanHoldemPlayer implements PlayerInterface {
         stake += needed;
         bank  -= needed;
 
-        pot.addToPot(needed);
+        if(getStake() > pots.get(currPotIndex).getMaxStake()){
+            pots.get(currPotIndex+1).addToPot(1);
+        } else {
+            pots.get(currPotIndex).addToPot(1);
+        }
+
+        pots.get(currPotIndex).addToPot(needed);
 
         System.out.println("\n> " + getName() + " says: I see that " + addCount(needed, "chip", "chips") + "!\n");
 
     }
 
     @Override
-    public void raiseBet(PotOfMoney pot) {
+    public void raiseBet(ArrayList<PotTexasHoldem> pots, int currPotIndex) {
         if (getBank() == 0) return;
 
         stake++;
         bank--;
 
-        pot.raiseStake(1);
+
+
+        if(getStake() > pots.get(currPotIndex).getMaxStake()){
+            pots.get(currPotIndex+1).raiseStake(1);
+        } else {
+            pots.get(currPotIndex).raiseStake(1);
+        }
 
         System.out.println("\n> " + getName() + " says: and I raise you 1 chip!\n");
 
+    }
+
+    @Override
+    public void allIn(PotOfMoney pot) {
+        int previousStake = stake;
+        stake += bank;
+        bank = 0;
+        allIn = true;
+        allInAddition = stake - previousStake;
     }
 
     @Override
@@ -196,14 +230,28 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
     @Override
     public boolean shouldRaise(PotOfMoney pot) {
-        return askQuestion("Do you want to raise the bet by 1 chip");    }
+        return askQuestion("Do you want to raise the bet by 1 chip");
+    }
 
     @Override
-    public void nextAction(PotOfMoney pot) {
+    public boolean shouldAllIn(PotOfMoney pot) {
+        if(pot.getCurrentStake() < getStake() + getBank()){
+            return false;
+        } else {
+            return askQuestion("Do you want to go all-in");
+        }
+    }
+
+    @Override
+    public void nextAction(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
+        PotTexasHoldem pot = pots.get(currPotIndex);
         if (hasFolded()) return;  // no longer in the game
 
         if (isBankrupt() || pot.getCurrentStake() - getStake() > getBank()) {
             // not enough money to cover the bet
+            if(shouldAllIn(pot)) {
+                allIn(pot);
+            }
 
             System.out.println("\n> " + getName() + " says: I'm out!\n");
 
@@ -225,10 +273,10 @@ public class HumanHoldemPlayer implements PlayerInterface {
                 // existing bet must be covered
 
                 if (shouldSee(pot)) {
-                    seeBet(pot);
+                    seeBet(pots, currPotIndex);
 
                     if (shouldRaise(pot))
-                        raiseBet(pot);
+                        raiseBet(pots, currPotIndex);
                 }
                 else
                     fold();
