@@ -12,6 +12,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     private HoldemHand hand 	= null;      // the hand dealt to this player
     private boolean folded 		= false;     // set to true when the player folds (gives up)
     private boolean allIn       = false;
+    private int allInAddition   = 0;        //increase stake to bank value
 
     public static final int VARIABILITY		= 50;
     private int riskTolerance				= 0;
@@ -79,6 +80,10 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     @Override
     public boolean isAllIn() {
         return allIn;
+    }
+
+    public int getAllInAddition() {
+        return allInAddition;
     }
 
     /* @Override
@@ -159,27 +164,15 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         bank  -= needed;
 
         if(getStake() > pots.get(currPotIndex).getMaxStake()){
-            pots.get(currPotIndex+1).addToPot(1);
+            pots.get(currPotIndex+1).addToPot(needed);
         } else {
-            pots.get(currPotIndex).addToPot(1);
+            pots.get(currPotIndex).addToPot(needed);
         }
 
         System.out.println("\n> " + getName() + " says: I see that " + addCount(needed, "chip", "chips") + "!\n");
 
     }
 
-    /*@Override
-    public void raiseBet(PotOfMoney pot) {
-        if (getBank() == 0) return;
-
-        stake++;
-        bank--;
-
-        pot.raiseStake(1);
-
-        System.out.println("\n> " + getName() + " says: and I raise you 1 chip!\n");
-
-    }*/
     @Override
     public void raiseBet(ArrayList<PotTexasHoldem> pots, int currPotIndex) {
         if (getBank() == 0) return;
@@ -187,21 +180,25 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         stake++;
         bank--;
 
-
         if(getStake() > pots.get(currPotIndex).getMaxStake()){
             pots.get(currPotIndex+1).raiseStake(1);
         } else {
             pots.get(currPotIndex).raiseStake(1);
         }
 
-        System.out.println("\n> " + getName() + " says: and I raise you 1 chip!\n");
+        System.out.println("\n> " + getName() + " says: I raise you 1 chip!\n");
 
     }
 
     @Override
     public void allIn(PotOfMoney pot) {
+        int previousStake = stake;
         stake += bank;
+        bank = 0;
         allIn = true;
+        allInAddition = stake - previousStake;
+
+        System.out.println("\n> " + getName() + " says: I'm all in!\n");
     }
 
     @Override
@@ -229,8 +226,9 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         if(pot.getCurrentStake() < getStake() + getBank()){
             return false;
         } else {
-            return Math.abs(dice.nextInt()) % 100 + getBank() < getHand().getRiskWorthiness() +
-                    getRiskTolerance();
+            /*return Math.abs(dice.nextInt()) % 100 + getBank() < getHand().getRiskWorthiness() +
+                    getRiskTolerance();*/
+            return true;
         }
     }
 
@@ -240,18 +238,20 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         PotTexasHoldem pot = pots.get(currPotIndex);
         if (hasFolded()) return;  // no longer in the game
 
-        if (isBankrupt() || pot.getCurrentStake() - getStake() > getBank()) {
-            // not enough money to cover the bet
-            if(shouldAllIn(pot)){
-                allIn(pot);
-            }
+        if(shouldAllIn(pot)){
+            allIn(pot);
+            return;
+        }
 
+        if (isBankrupt()) {
+            // not enough money to cover the bet
             System.out.println("\n> " + getName() + " says: I'm out!\n");
 
             fold();
 
             return;
         }
+
 
         if (pot.getCurrentStake() == 0) {
             // first mover of the game

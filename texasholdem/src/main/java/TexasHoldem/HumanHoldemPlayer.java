@@ -17,6 +17,8 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
     private boolean folded 		= false;     // set to true when the player folds (gives up)
     private boolean allIn       = false;
+    private int allInAddition   = 0;
+
 
 
     public HumanHoldemPlayer(String name, int money) {
@@ -88,6 +90,10 @@ public class HumanHoldemPlayer implements PlayerInterface {
     @Override
     public boolean isAllIn() {
         return allIn;
+    }
+
+    public int getAllInAddition() {
+        return allInAddition;
     }
 
     /* @Override
@@ -201,8 +207,11 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
     @Override
     public void allIn(PotOfMoney pot) {
+        int previousStake = stake;
         stake += bank;
+        bank = 0;
         allIn = true;
+        allInAddition = stake - previousStake;
     }
 
     @Override

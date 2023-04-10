@@ -13,6 +13,7 @@ public interface PlayerInterface {
     public boolean isBankrupt();
     public boolean hasFolded();
     public boolean isAllIn();
+    public int getAllInAddition();
     //public void reorganizeHand();
     public void dealTo(DeckOfCards deck);
     public void takePot(PotOfMoney pot);

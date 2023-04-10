@@ -154,7 +154,8 @@ public class HoldemHand {
         return bestHand;
     }
 
-    public List<List<Card>> generatePossibleHands(){
+    public List<List<Card>> generatePossibleHands(){        //TODO possible create seperate communityHand which is passed
+        //hand = HoldemHand + communityCards
         List<List<Card>> possibleHands = new ArrayList<>(); //store possible hands
         for (int i = 0; i < playerHand.size() - 1; i++) { //iterates through all cards except for last
             for (int j = i + 1; j < playerHand.size(); j++) { //iterates all cards in players hand after current card in outer loop (ensure theres 2 cards)
@@ -171,6 +172,7 @@ public class HoldemHand {
         }
         return possibleHands;
     }
+
 
     public int evaluateHand(List<Card> hand) {
         sortHand();
@@ -203,7 +205,14 @@ public class HoldemHand {
 
 
     public void sortHand() {
-        playerHand.sort(Collections.reverseOrder());
+        /*playerHand.sort(Collections.reverseOrder());*/
+        Card[] cardArray = playerHand.toArray(new Card[0]);
+        Arrays.sort(cardArray, new Comparator<Card>(){
+            @Override
+            public int compare(Card card1, Card card2){
+                return Integer.compare(card2.getValue(), card1.getValue()); // sort in descending order
+            }
+        });
     }
 
 

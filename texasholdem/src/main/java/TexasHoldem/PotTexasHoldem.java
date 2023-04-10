@@ -11,8 +11,7 @@ public class PotTexasHoldem extends PotOfMoney{
     int maxStake = Integer.MAX_VALUE;       //no max until a player goes all-in
     
     public PotTexasHoldem(ArrayList<PlayerInterface> potPlayers){
-        players.addAll(potPlayers);
-
+        players = potPlayers;
     }
     
     public int getNumPlayers(){

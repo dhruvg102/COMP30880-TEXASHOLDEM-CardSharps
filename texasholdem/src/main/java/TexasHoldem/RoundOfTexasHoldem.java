@@ -3,6 +3,7 @@ package TexasHoldem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import poker.*;
 
@@ -240,11 +241,19 @@ public class RoundOfTexasHoldem {
 
 	ArrayList<PotTexasHoldem> pots = new ArrayList<PotTexasHoldem>();
 
+	public ArrayList<PotTexasHoldem> getPots() {
+		return pots;
+	}
+
+	public void setPots(ArrayList<PotTexasHoldem> pots) {
+		this.pots = pots;
+	}
+
 	//TODO: Side bets Showdown
 	public void play(){
 
-		List<PlayerInterface> listPlayers = Arrays.asList(players);
-		PotTexasHoldem mainPot = new PotTexasHoldem((ArrayList<PlayerInterface>) listPlayers);
+		ArrayList<PlayerInterface> listPlayers = new ArrayList<>(Arrays.asList(players));
+		PotTexasHoldem mainPot = new PotTexasHoldem(listPlayers);
 		pots.add(mainPot);
 
 		// Initialize bank and print the values for each player;
@@ -296,6 +305,8 @@ public class RoundOfTexasHoldem {
 		}
 	}
 
+	//
+
 	//private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
 	private void goAround(Integer playerStart, Integer numActive, int indexCurrPot){
 
@@ -304,13 +315,14 @@ public class RoundOfTexasHoldem {
 		for (int i = 0; i < activePot.getNumPlayers() ; i++) {
 			PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i)% activePot.getNumPlayers());
 
-			if (currentPlayer == null || currentPlayer.hasFolded())
+			if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
 				continue;
 
 			//delay(DELAY_BETWEEN_ACTIONS);
 
 			if (numActive == 1) { //if only one player remains
-				currentPlayer.takePot(activePot);
+				currentPlayer.takePot(pots.get(pots.size()-1));
+
 				System.out.println("\nNo Players left in the game.\n");
 				return;
 			}
@@ -322,7 +334,45 @@ public class RoundOfTexasHoldem {
 			}
 
 			if(currentPlayer.isAllIn()){
-				newSidePot(currentPlayer);
+				addSidePot(currentPlayer, indexCurrPot);
+			}
+		}
+	}
+
+	public void bettingCycle(int numActive, int playerStart) {
+		int indexCurrPot = pots.size()-1;
+		int stake = pots.get(pots.size()-1).getCurrentStake();
+		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+			stake = pots.get(pots.size() - 1).getCurrentStake();
+
+			PotTexasHoldem activePot = pots.get(indexCurrPot);
+
+			for (int i = 0; i < activePot.getNumPlayers(); i++) {
+				PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i) % activePot.getNumPlayers());
+
+				if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
+					continue;
+
+				//delay(DELAY_BETWEEN_ACTIONS);
+
+				if (numActive == 1) { //if only one player remains
+					currentPlayer.takePot(pots.get(pots.size() - 1));
+
+					System.out.println("\nNo Players left in the game.\n");
+					return;
+				}
+
+				currentPlayer.nextAction(pots, indexCurrPot);
+
+				//actions after player's move
+				if (currentPlayer.hasFolded()) { //checks for fold
+					numActive--;
+				}
+
+				if (currentPlayer.isAllIn()) {
+					addSidePot(currentPlayer, indexCurrPot);
+					indexCurrPot++;
+				}
 			}
 		}
 	}
@@ -406,31 +456,53 @@ public class RoundOfTexasHoldem {
 		//Last person to bet or raise shows their card , unless there was no bet on the final round
 		//in which case the player immediately clockwise from the button shows their cards first
 
-		//TODO - Conor - winner of each pot is best hand of players in pot
+		//TODO Conor - winner of each pot is best hand of players in pot
 
 	}
 
-	public void newSidePot(PlayerInterface allInPlayer) {
+	//TODO Conor - does this actually work?
+	public void addSidePot(PlayerInterface allInPlayer, int indexCurrPot) {
+		for (PlayerInterface otherPlayer: pots.get(indexCurrPot).getPlayers()) {
+			if(otherPlayer.isAllIn() && !Objects.equals(otherPlayer.getName(), allInPlayer.getName())){
+				if(otherPlayer.getStake() == pots.get(indexCurrPot).getMaxStake() && otherPlayer.getAllInAddition() == allInPlayer.getAllInAddition()){
+					pots.get(indexCurrPot).addToPot(allInPlayer.getAllInAddition());
+				}
+				else if(otherPlayer.getAllInAddition() > allInPlayer.getAllInAddition()){
+					//this side pot is before the other side pot
+					newSidePot(allInPlayer, indexCurrPot);
+				}
+				else {	//otherPlayer.getAllInAddition() < allInPlayer.getAllInAddition()
+					//this side pot is after the other side pot
+					newSidePot(allInPlayer, indexCurrPot+1);
+				}
+			}
+		}
+	}
+
+	public void newSidePot(PlayerInterface allInPlayer, int currPot) {
+		System.out.println("Initial total curr pot: " + pots.get(pots.size()-1).getTotal());
 		//current pot - can only have stake matching all-in player in this pot
-		int currPot = pots.size() - 1;
 		int potMax = allInPlayer.getStake();	//max value allowed for each player in current pot
 		pots.get(currPot).setMaxStake(potMax);
 
-		int overflow = 0;	//remove excess from pot & add to 2nd pot
-		for (PlayerInterface player: pots.get(currPot).getPlayers()) {
-			overflow += player.getStake() - potMax;
-		}
-
-		pots.get(currPot).removeFromPot(overflow);
-
-		//new pot - add excess from previous pot
 		PotTexasHoldem newPot = new PotTexasHoldem(pots.get(currPot).getPlayers());
 		newPot.removePlayer(allInPlayer);
-		newPot.addToPot(overflow);
 		newPot.newPotStake(pots.get(currPot).getCurrentStake());
-		pots.add(newPot);
+		pots.add(currPot+1, newPot);
 
-		//TODO Conor - manage later players within round (not in this method)
+		potOverflow(pots, currPot);
+	}
+
+	public void potOverflow(ArrayList<PotTexasHoldem> pots, int currPot){
+		int overflow;	//remove excess from pot & add to next pot
+		for(int i =currPot; i < pots.size()-1; i++) {
+			overflow = 0;
+			for (PlayerInterface player: pots.get(i).getPlayers()) {
+				overflow += player.getStake() - pots.get(i).getMaxStake();
+			}
+			pots.get(i).removeFromPot(overflow);
+			pots.get(i+1).addToPot(overflow);
+		}
 	}
 
 	public int getRoundStake() {	//must match last pot's stake
