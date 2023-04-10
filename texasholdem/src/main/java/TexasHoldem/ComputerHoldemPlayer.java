@@ -136,7 +136,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 
 		if(bank < blindAmt) {
 			stake = stake + bank;
-			pot.raiseStake(bank);
+			pot.addStake(bank);
 			bank = 0;
 
 			//Change state to all - in ??
@@ -145,7 +145,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 		}
 		else{
 			stake = stake + blindAmt;
-			pot.raiseStake(blindAmt);
+			pot.addStake(stake);
 			bank = bank-blindAmt;
 
 		}

@@ -53,6 +53,7 @@ public class PotTexasHoldem extends PotOfMoney{
         addToPot(amount);
     }
 
+
     public int getMaxStake() {
         return maxStake;
     }
