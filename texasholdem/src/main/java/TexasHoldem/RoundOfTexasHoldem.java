@@ -24,15 +24,21 @@ public class RoundOfTexasHoldem {
 	private int numPlayers;
 	
 	private int button = 0; // Player starts as the dealer;
+
+	private int smallBlind = 1;
+	private int bigBlind = 2;
+
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	// Constructor
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 	
-	public RoundOfTexasHoldem(DeckOfCards deck, PlayerInterface[] players) {
+	public RoundOfTexasHoldem(DeckOfCards deck, PlayerInterface[] players, int smallBlind) {
 		this.players = players; //init players
 		this.deck    = deck; //init deck
+		this.smallBlind = smallBlind;
+		this.bigBlind = 2*smallBlind;
 		numPlayers   = players.length; //get totalPlayers
 
 		button++;
@@ -183,29 +189,27 @@ public class RoundOfTexasHoldem {
 	// a pair)
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
-	private int SMALL_BLIND = 1;
-	private int BIG_BLIND = 2*SMALL_BLIND;
 
 
 	public void canOpen() {
 
 		//Player to the left of the dealer posts the small blind
 		{
-			if(players[button+1].getBank()<SMALL_BLIND){
+			if(players[button+1].getBank()<smallBlind){
 				//Player does not have enough chips to open
 				System.out.println(players[button+2].getName() + "says: I cannot post the Small Blind. I am All-In");
 			}
-			else if(players[button+1].getBank()>=SMALL_BLIND){
+			else if(players[button+1].getBank()>=smallBlind){
 				System.out.println(players[button+1].getName() + "says: I can post the Small Blind. ");
 			}
 		}
 
 		//Player to the left of the small blind posts the big blind
 		{
-			if(players[button+2].getBank()<BIG_BLIND)
+			if(players[button+2].getBank()<bigBlind)
 			//Player does not have enough chips to open
 				System.out.println(players[button+2].getName() + "says: I cannot post the Big Blind. I am All-In");
-			else if(players[button+2].getBank()<BIG_BLIND)
+			else if(players[button+2].getBank()<bigBlind)
 			//Player does not have enough chips to open
 				System.out.println(players[button+2].getName() + "says: I can post the Big Blind.");
 		}
@@ -263,7 +267,6 @@ public class RoundOfTexasHoldem {
 		deck.reset();
 
 
-
 		roundOpen(mainPot, players[button+1], players[button+2]);
 
 		// Game actions
@@ -281,17 +284,16 @@ public class RoundOfTexasHoldem {
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
 		river(stake, numActive , pots.size()-1);
 
-		//if all players call or fold then it stops and goes to next part
-		//if raise goes through loop again all the players that called not the folded
+		showdown();
 
 	}
 
-	private void roundOpen(PotTexasHoldem pot, PlayerInterface smallBlind, PlayerInterface bigBlind ){
+	private void roundOpen(PotTexasHoldem pot, PlayerInterface playerSmallBlind, PlayerInterface playerBigBlind) {
 
 		//Post small blind
-		smallBlind.postBlind(pot, SMALL_BLIND, "Small Blind");
+		playerSmallBlind.postBlind(pot, smallBlind, "Small Blind");
 		//Post big blind
-		smallBlind.postBlind(pot, BIG_BLIND, "Big Blind");
+		playerSmallBlind.postBlind(pot, bigBlind, "Big Blind");
 
 	}
 	//TODO
@@ -303,40 +305,6 @@ public class RoundOfTexasHoldem {
 			}
 		}
 	}
-
-	//
-
-	//private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
-	/*private void goAround(Integer playerStart, Integer numActive, int indexCurrPot){
-
-		PotTexasHoldem activePot = pots.get(indexCurrPot);
-
-		for (int i = 0; i < activePot.getNumPlayers() ; i++) {
-			PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i)% activePot.getNumPlayers());
-
-			if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
-				continue;
-
-			//delay(DELAY_BETWEEN_ACTIONS);
-
-			if (numActive == 1) { //if only one player remains
-				currentPlayer.takePot(pots.get(pots.size()-1));
-
-				System.out.println("\nNo Players left in the game.\n");
-				return;
-			}
-
-			currentPlayer.nextAction(pots, indexCurrPot);
-
-			if (currentPlayer.hasFolded()){ //checks for fold
-				numActive--;
-			}
-
-			if(currentPlayer.isAllIn()){
-				addSidePot(currentPlayer, indexCurrPot);
-			}
-		}
-	}*/
 
 	public void bettingCycle(int playerStart) {
 		int indexCurrPot = pots.size()-1;

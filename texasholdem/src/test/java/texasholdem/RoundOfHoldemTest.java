@@ -23,7 +23,7 @@ public class RoundOfHoldemTest {
 
     private PlayerInterface[] players = {player1,player2,player3,player4,player5};
 
-    private RoundOfTexasHoldem round = new RoundOfTexasHoldem(new DeckOfCards(), players);
+    private RoundOfTexasHoldem round = new RoundOfTexasHoldem(new DeckOfCards(), players, 1);
 
     ArrayList<PotTexasHoldem> pots = new ArrayList<PotTexasHoldem>();
 
