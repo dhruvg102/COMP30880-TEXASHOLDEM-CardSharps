@@ -443,7 +443,6 @@ public class RoundOfTexasHoldem {
 
 			for (int i = 0; i < pot.getNumPlayers(); i++) {
 				currentPlayer = pot.getPlayer(i);
-
 				if (currentPlayer == null || currentPlayer.hasFolded())
 					continue;
 
