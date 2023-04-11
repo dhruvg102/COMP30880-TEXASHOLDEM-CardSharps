@@ -102,6 +102,12 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     }
 
     @Override
+    public void addCommunityCards(List<Card> cards){
+        this.hand.addCommunityCards(cards);
+    }
+
+
+    @Override
     public void takePot(PotOfMoney pot) {
         System.out.println("\n> " + getName() + " says: I WIN " + addCount(pot.getTotal(), "chip", "chips") + "!\n");
         System.out.println(hand.toString());
@@ -268,19 +274,19 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         }
         else {
             if (pot.getCurrentStake() > getStake()) {
-                // existing bet must be covered
-
                 if (shouldSee(pot)) {
                     seeBet(pots, currPotIndex);
-
-                    if (shouldRaise(pot))
-                        raiseBet(pots, currPotIndex);
                 }
-                else
+                else {
                     fold();
+                    return;
+                }
+            }
+            if (shouldRaise(pot)){
+                raiseBet(pots, currPotIndex);
             }
             else {
-                System.out.println("\n> " + getName() + " says: I check!\n");
+                System.out.println(getName() + " says: I check!");
             }
         }
     }
