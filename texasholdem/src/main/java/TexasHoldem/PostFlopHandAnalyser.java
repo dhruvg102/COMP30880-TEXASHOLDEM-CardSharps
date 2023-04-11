@@ -42,6 +42,20 @@ public class PostFlopHandAnalyser {
         }
     }
 
+    public void sortCommunityCardsAscending() {
+        Card temp;
+
+        for(int i = 0; i < communityCards.size() - 1; i++) {
+            for(int j = 0; j < communityCards.size() - i - 1; j++) {
+                if(communityCards.get(j).getValue() > communityCards.get(j + 1).getValue()) {
+                    temp = communityCards.get(j);
+                    communityCards.set(j, communityCards.get(j + 1));
+                    communityCards.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
     public boolean isTopPair() {
         boolean cardIsEqual = false;
 
@@ -320,5 +334,59 @@ public class PostFlopHandAnalyser {
         }
 
         return trash;
+    }
+
+    public boolean isDrawy() {
+        int heartCount = 0;
+        int spadeCount = 0;
+        int clubCount = 0;
+        int diamondCount = 0;
+
+        int longestRun= 0;
+
+        boolean drawy = false;
+
+        for(int i = 0; i < communityCards.size(); i ++){
+            switch (communityCards.get(i).getSuit()) {
+                case "hearts":
+                    heartCount++;
+                case "spades":
+                    spadeCount++;
+                case "clubs":
+                    clubCount++;
+                case "diamonds":
+                    diamondCount++;
+            }
+        }
+
+        int previousValue = -1;
+        int currentValue;
+
+        sortCommunityCardsAscending();
+
+        for(int i = 0; i < communityCards.size(); i++){
+            currentValue = communityCards.get(i).getValue();
+
+            if(currentValue == previousValue + 1){
+                longestRun++;
+            }
+            else {
+                longestRun = 0;
+            }
+
+            previousValue = currentValue;
+        }
+
+        if((heartCount >= 3 || spadeCount >= 3 || clubCount >= 3 || diamondCount >= 3) || (longestRun >=3)){
+            drawy = true;
+        }
+        else if ((heartCount == 2 || spadeCount == 2 || clubCount == 2 || diamondCount == 2) && (longestRun ==2)) {
+            drawy = true;
+        }
+        else {
+            drawy = false;
+        }
+
+        return drawy;
     }
 }
