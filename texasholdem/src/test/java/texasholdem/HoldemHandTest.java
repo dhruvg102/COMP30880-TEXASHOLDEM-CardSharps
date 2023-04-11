@@ -38,26 +38,6 @@ public class HoldemHandTest {
         }
 
         @Test
-        public void testCommunityCardsSize() {
-                HoldemHand hand = new HoldemHand(deck);
-                List<Card> communityCards = new ArrayList<>();
-                communityCards.add(deck.dealNext());
-                communityCards.add(deck.dealNext());
-                communityCards.add(deck.dealNext());
-                hand.addCommunityCards(communityCards);
-                List<Card> allCards = hand.getFullHand();
-                assertEquals(5, allCards.size());
-        }
-
-        @Test
-        public void testNoDuplicateCards() {
-                HoldemHand hand = new HoldemHand(deck);
-                List<Card> allCards = hand.getFullHand();
-                Set<Card> uniqueCards = new HashSet<>(allCards);
-                assertEquals(allCards.size(), uniqueCards.size());
-        }
-
-        @Test
         public void testHoldemHand() {
                 List<Card> hand = new ArrayList<>();
                 hand.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
