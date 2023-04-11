@@ -1,6 +1,8 @@
 
 package poker;
 
+import javax.sound.midi.Soundbank;
+
 // This package provides classes necessary for implementing a game system for playing poker
 
 // A Player is an object that can make decisions in a game of poker
@@ -135,7 +137,7 @@ abstract class Player {
 	    // when the winner of a hand takes the pot as his/her winnings
 	
 		System.out.println("\n> " + getName() + " says: I WIN " + addCount(pot.getTotal(), "chip", "chips") + "!\n");
-		System.out.println(hand.toString());
+		System.out.println("Winning hand: \n" + hand.toString());
 		
 		bank += pot.takePot();
 		
