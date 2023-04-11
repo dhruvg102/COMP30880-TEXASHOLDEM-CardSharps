@@ -156,6 +156,7 @@ public class RoundOfTexasHoldem {
 			System.out.println(players[(button+i)%numPlayers].getName() + "says: I cannot post the Small Blind. \n" + "I can't afford to play anymore");
 			
 			removePlayer((button + i)%numPlayers);
+			pot.removePlayer(players[(button + i)%numPlayers]);
 			i++;
 			
 		}
@@ -173,6 +174,7 @@ public class RoundOfTexasHoldem {
 				System.out.println(players[(button+i+1)%numPlayers].getName() + "says: I cannot post the Big Blind. . \n " +"I can't afford to play anymore");
 				
 				removePlayer((button+i+1)%numPlayers);
+				pot.removePlayer(players[(button + i)%numPlayers]);
 
 				i++;
 			
