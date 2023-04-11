@@ -112,6 +112,10 @@ public class HumanHoldemPlayer implements PlayerInterface {
         this.hand.addCommunityCards(cards);
     }
 
+    @Override
+    public void reduceStake(int reduction){
+        stake -= reduction;
+    }
 
     @Override
     public void takePot(PotOfMoney pot) {
@@ -244,7 +248,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
         if (isBankrupt() ) {
             // not enough money to cover the bet
-            
+
             System.out.println("\n> " + getName() + " says: I'm out!\n");
 
             fold();
@@ -255,7 +259,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
             allIn(pot);
             return;
         }
-   
+
         else if(!isAllIn()){
             if (pot.getCurrentStake() > getStake()) {
                 // existing bet must be covered

@@ -18,6 +18,9 @@ public interface PlayerInterface {
     //public void reorganizeHand();
     public void dealTo(DeckOfCards deck);
     public void addCommunityCards(List<Card> card);
+
+    void reduceStake(int reduction);
+
     public void takePot(PotOfMoney pot);
     public void fold();
     public void openBetting(PotOfMoney pot);

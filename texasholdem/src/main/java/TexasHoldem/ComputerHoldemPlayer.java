@@ -102,6 +102,11 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     }
 
     @Override
+    public void reduceStake(int reduction){
+        stake -= reduction;
+    }
+
+    @Override
     public void takePot(PotOfMoney pot) {
         System.out.println("\n> " + getName() + " says: I WIN " + addCount(pot.getTotal(), "chip", "chips") + "!\n");
         System.out.println(hand.toString());
@@ -247,9 +252,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
             // not enough money to cover the bet
             
             System.out.println("\n> " + getName() + " says: I'm out!\n");
-
             fold();
-
             return;
         }
         if(shouldAllIn(pot)) {

@@ -35,7 +35,7 @@ public class RoundOfHoldemTest {
         //RoundOfTexasHoldem round = new RoundOfTexasHoldem(new DeckOfCards(), players);
     }
 
-    @Test
+    /*@Test
     public void testAllIn() {
         round.setPots(pots);
 
@@ -104,17 +104,8 @@ public class RoundOfHoldemTest {
         System.out.println("-----");
 
     }
-
-    @Test
-    public void testNewSidePot() {
-        round.setPots(pots);
-        assertEquals(5, pots.get(0).getNumPlayers());
-        round.newSidePot(player4, 0);
-        assertEquals(5, pots.get(0).getNumPlayers());
-        assertEquals(4, pots.get(1).getNumPlayers());
-    }
-
-    @Test
+*/
+   /* @Test
     public void testAddSidePot() {
         round.setPots(pots);
         assertEquals(pots.get(0).getNumPlayers(), 5);
@@ -123,4 +114,86 @@ public class RoundOfHoldemTest {
         round.addSidePot(player2, 0);
         assertEquals(pots.get(0).getNumPlayers(), 5);
     }
+*/
+
+    @Test
+    public void testNewSidePotsIdea() {
+        round.setPots(pots);
+        player1.raiseBet(pots, );
+    }
+
+    @Test
+    public void testNewSidePot() {
+//1st cycle
+        player1.raiseBet(pots, 0);
+        player2.seeBet(pots, 0);
+        player3.seeBet(pots,0);
+        player4.seeBet(pots, 0);
+        player5.seeBet(pots,0);
+        System.out.println("pot0 total: " + pots.get(0).getTotal());
+        assertEquals(1, pots.get(0).getCurrentStake());
+        assertEquals(5, pots.get(0).getTotal());
+
+        //2nd cycle
+        player1.raiseBet(pots, 0);
+        player2.seeBet(pots,0);
+        player3.seeBet(pots,0);
+        player4.seeBet(pots,0);
+        System.out.println("pot0 total: " + pots.get(0).getTotal());
+        player5.allIn(pots.get(0));
+        System.out.println("pot0 total: " + pots.get(0).getTotal());
+        System.out.println("pot1 total: " + pots.get(1).getTotal());
+
+        assertEquals(1, pots.get(0).getMaxStake());
+        assertEquals(5,  pots.get(0).getTotal());
+        assertEquals(4,  pots.get(1).getTotal());
+
+        //3rd cycle
+        player1.raiseBet(pots, 1);
+        player2.seeBet(pots, 1);
+        player3.seeBet(pots, 1);
+        player4.seeBet(pots, 1);
+
+        assertEquals(3, pots.get(1).getCurrentStake());
+        assertEquals(5, pots.get(0).getTotal());
+        assertEquals(8, pots.get(1).getTotal());
+        
+        pots = round.newSidePotsIdea(pots.get(0));
+    }
+    
+    
+/*
+    @Test
+    public void testOverflow() {
+        round.setPots(pots);
+
+        ArrayList<PlayerInterface> listPlayers = new ArrayList<>(Arrays.asList(players));
+        listPlayers.remove(player5);
+        PotTexasHoldem pot2 = new PotTexasHoldem(listPlayers);
+        pots.add(pot2);
+
+        player1.seeBet(pots,0);
+        player1.raiseBet(pots,0);
+        for (PlayerInterface player: pots.get(0).getPlayers()) {
+            if(player != player1)
+                player.seeBet(pots,0);
+        }
+        player4.seeBet(pots,0);
+
+        pots.get(0).setMaxStake(1);
+
+        System.out.println("pre overflow");
+        for (PotTexasHoldem pot: pots) {
+            System.out.println(pot.getTotal());
+        }
+        //round.potOverflow(pots, 0);
+        System.out.println("post overflow");
+        for (PotTexasHoldem pot: pots) {
+            System.out.println(pot.getTotal());
+        }
+        System.out.println("size:"+pots.size());
+
+    }*/
+
+
 }
