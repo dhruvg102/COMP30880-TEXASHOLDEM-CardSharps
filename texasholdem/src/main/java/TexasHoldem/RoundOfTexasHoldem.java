@@ -378,11 +378,12 @@ public class RoundOfTexasHoldem {
 	*
 	*
 	* */
+	ArrayList<PlayerInterface> newPotPlayers;
 	public ArrayList<PotTexasHoldem> newSidePots(PotTexasHoldem pot) {
 		ArrayList<PotTexasHoldem> sidePots = new ArrayList<>();
 		sidePots.add(pot);
 
-		ArrayList<PlayerInterface> newPotPlayers = new ArrayList<>(pot.getPlayers());
+		newPotPlayers = new ArrayList<>(pot.getPlayers());
 
 		Collections.sort(newPotPlayers, new Comparator<PlayerInterface>() {
 			@Override
@@ -396,46 +397,37 @@ public class RoundOfTexasHoldem {
 		System.out.println(newPotPlayers);
 
 		for (int playerIndex = 0; playerIndex < newPotPlayers.size(); playerIndex++) {
-			if(newPotPlayers.get(playerIndex).getStake() < maxPlayerStake  &&  newPotPlayers.get(playerIndex).getStake() > 0) {
-				//System.out.println(newPotPlayers.get(playerIndex).getStake()+" : "+maxPlayerStake);
+			//if(newPotPlayers.get(playerIndex).getStake() < maxPlayerStake  &&  newPotPlayers.get(playerIndex).getStake() > 0) {
+			if(newPotPlayers.get(playerIndex).isAllIn()){
 				addNewSidePot(newPotPlayers, sidePots, playerIndex);
-				for (PotTexasHoldem pottty: sidePots) {
-					System.out.println("potty: " + pottty.getNumPlayers());
-				}
-				//System.out.println(newPotPlayers);
 			}
 		}
-
-		System.out.println("newPotPlayers.size(): "+newPotPlayers.size());
-		System.out.println(newPotPlayers);
-
 
 		return sidePots;
 	}
 
-	public void addNewSidePot(ArrayList<PlayerInterface> newPotPlayers, ArrayList<PotTexasHoldem> sidePots, int allInPlayer) {
+	public void addNewSidePot(ArrayList<PlayerInterface> XXXXnewPotPlayers, ArrayList<PotTexasHoldem> sidePots, int allInPlayer) {
 		int currPot = sidePots.size() - 1;
 
 		int potMax = newPotPlayers.get(allInPlayer).getStake();    //max value allowed for each player in current pot
 		sidePots.get(currPot).setMaxStake(potMax);
 
-		ArrayList<PlayerInterface> nextPotPlayers = new ArrayList<>(newPotPlayers);
-		nextPotPlayers.remove(allInPlayer);
+		//ArrayList<PlayerInterface> nextPotPlayers = new ArrayList<>(newPotPlayers);
+		newPotPlayers.remove(allInPlayer);
 
-		//PotTexasHoldem newPot = new PotTexasHoldem(nextPotPlayers);
-		PotTexasHoldem newPot
+		PotTexasHoldem newPot = new PotTexasHoldem(newPotPlayers);
+		//PotTexasHoldem newPot
 
-		for (int playerIndex = allInPlayer; playerIndex < nextPotPlayers.size(); playerIndex++) {
-			int overflow = nextPotPlayers.get(playerIndex).getStake() - potMax;
+		for (int playerIndex = allInPlayer; playerIndex < newPotPlayers.size(); playerIndex++) {
+			int overflow = newPotPlayers.get(playerIndex).getStake() - potMax;
 			newPot.addToPot(overflow);
-			nextPotPlayers.get(playerIndex).reduceStake(overflow);
+			newPotPlayers.get(playerIndex).reduceStake(overflow);
 			sidePots.get(currPot).removeFromPot(overflow);
 		}
 
-		if(newPot.getTotal() > 0){
+		//if(newPot.getTotal() > 0){
 			sidePots.add(newPot);
-		}
-		//sidePots.add(newPot);
+		//}
 	}
 
 	private void printPlayerHand() {
