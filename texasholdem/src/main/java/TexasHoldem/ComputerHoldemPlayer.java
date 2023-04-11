@@ -240,7 +240,10 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 
     @Override
     public void nextAction(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
-        PotTexasHoldem pot = pots.get(currPotIndex);
+        PotTexasHoldem pot = pots.get(pots.size()-1);
+        if(!pot.getPlayers().contains(this)){
+            return;
+        }
         if (hasFolded()) return;  // no longer in the game
 
         if (isBankrupt() ) {
