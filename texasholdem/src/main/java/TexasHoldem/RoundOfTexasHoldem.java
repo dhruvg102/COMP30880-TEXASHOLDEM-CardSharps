@@ -332,7 +332,6 @@ public class RoundOfTexasHoldem {
 				System.out.println("Player " + currentPlayer.getName() + "'s hand: " + currentPlayer.getHand().getBestHand());
 				score = currentPlayer.getHand().getBestHandValue();
 				if (score > bestHandScore) {
-					bestPos = i;
 					bestHandScore = score;
 					bestPlayer = currentPlayer;
 				}
@@ -372,8 +371,14 @@ public class RoundOfTexasHoldem {
 		}
 	}
 
+	/*
+	*
+	* Sorts the player's in ascending order of stake
+	* for each player who's stake is less than the max player's stake
+	*
+	*
+	* */
 	public ArrayList<PotTexasHoldem> newSidePots(PotTexasHoldem pot) {
-		System.out.println("newSidePotsIdea");
 		ArrayList<PotTexasHoldem> sidePots = new ArrayList<>();
 		sidePots.add(pot);
 
@@ -387,13 +392,24 @@ public class RoundOfTexasHoldem {
 		});
 
 		int maxPlayerStake = newPotPlayers.get(newPotPlayers.size() - 1).getStake();
-		System.out.println("max player stake: " + maxPlayerStake);
+
+		System.out.println(newPotPlayers);
 
 		for (int playerIndex = 0; playerIndex < newPotPlayers.size(); playerIndex++) {
-			if( newPotPlayers.get(playerIndex).getStake() < maxPlayerStake  &&  newPotPlayers.get(playerIndex).getStake() > 0 ) {
+			if(newPotPlayers.get(playerIndex).getStake() < maxPlayerStake  &&  newPotPlayers.get(playerIndex).getStake() > 0) {
+				//System.out.println(newPotPlayers.get(playerIndex).getStake()+" : "+maxPlayerStake);
 				addNewSidePot(newPotPlayers, sidePots, playerIndex);
+				for (PotTexasHoldem pottty: sidePots) {
+					System.out.println("potty: " + pottty.getNumPlayers());
+				}
+				//System.out.println(newPotPlayers);
 			}
 		}
+
+		System.out.println("newPotPlayers.size(): "+newPotPlayers.size());
+		System.out.println(newPotPlayers);
+
+
 		return sidePots;
 	}
 
@@ -403,16 +419,23 @@ public class RoundOfTexasHoldem {
 		int potMax = newPotPlayers.get(allInPlayer).getStake();    //max value allowed for each player in current pot
 		sidePots.get(currPot).setMaxStake(potMax);
 
-		newPotPlayers.remove(allInPlayer);
-		PotTexasHoldem newPot = new PotTexasHoldem(newPotPlayers);
+		ArrayList<PlayerInterface> nextPotPlayers = new ArrayList<>(newPotPlayers);
+		nextPotPlayers.remove(allInPlayer);
 
-		for (int playerIndex = allInPlayer; playerIndex < newPotPlayers.size(); playerIndex++) {
-			int overflow = newPotPlayers.get(playerIndex).getStake() - potMax;
+		//PotTexasHoldem newPot = new PotTexasHoldem(nextPotPlayers);
+		PotTexasHoldem newPot
+
+		for (int playerIndex = allInPlayer; playerIndex < nextPotPlayers.size(); playerIndex++) {
+			int overflow = nextPotPlayers.get(playerIndex).getStake() - potMax;
 			newPot.addToPot(overflow);
-			newPotPlayers.get(playerIndex).reduceStake(overflow);
+			nextPotPlayers.get(playerIndex).reduceStake(overflow);
 			sidePots.get(currPot).removeFromPot(overflow);
 		}
-		sidePots.add(newPot);
+
+		if(newPot.getTotal() > 0){
+			sidePots.add(newPot);
+		}
+		//sidePots.add(newPot);
 	}
 
 	private void printPlayerHand() {
