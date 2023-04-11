@@ -159,8 +159,8 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 		return enough;
 	}
     @Override
-    public void seeBet(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
-        int needed  = pots.get(pots.size()-1).getCurrentStake() - getStake();   //stake last pot
+    public void seeBet(PotTexasHoldem pot) {
+        int needed  = pot.getCurrentStake() - getStake();   //stake last pot
 
         if (needed == 0 || needed > getBank())
             return;
@@ -168,33 +168,27 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         stake += needed;
         bank  -= needed;
 
-        if(getStake() > pots.get(currPotIndex).getMaxStake()){
-            pots.get(currPotIndex+1).addToPot(needed);
-        } else {
-            pots.get(currPotIndex).addToPot(needed);
-        }
-
+        pot.addToPot(needed);
         System.out.println("\n> " + getName() + " says: I see that " + addCount(needed, "chip", "chips") + "!\n");
 
     }
 
     @Override
-    public void raiseBet(ArrayList<PotTexasHoldem> pots, int currPotIndex) {
+    public void raiseBet(PotTexasHoldem pot) {
         if (getBank() == 0) return;
 
         stake++;
         bank--;
 
-        if(getStake() > pots.get(currPotIndex).getMaxStake()){
-            pots.get(currPotIndex+1).raiseStake(1);
-        } else {
-            pots.get(currPotIndex).raiseStake(1);
-        }
+        pot.raiseStake(1);
 
         System.out.println("\n> " + getName() + " says: I raise you 1 chip!\n");
 
     }
-
+    @Override
+    public void reduceStake(int reduction){
+        stake -= reduction;
+    }
     @Override
     public void allIn(PotOfMoney pot) {
         int previousStake = stake;
@@ -239,11 +233,8 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 
 
     @Override
-    public void nextAction(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
-        PotTexasHoldem pot = pots.get(pots.size()-1);
-        if(!pot.getPlayers().contains(this)){
-            return;
-        }
+    public void nextAction(PotTexasHoldem pot) {
+
         if (hasFolded()) return;  // no longer in the game
 
         if (isBankrupt() ) {
@@ -265,7 +256,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
                 // existing bet must be covered
 
                 if (shouldSee(pot)) {
-                    seeBet(pots, currPotIndex);
+                    seeBet(pot);
                 }
                 else{
                     fold();
@@ -273,7 +264,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
                }
             }
             if (shouldRaise(pot)){
-                raiseBet(pots, currPotIndex);
+                raiseBet(pot);
                 return;
             }
 

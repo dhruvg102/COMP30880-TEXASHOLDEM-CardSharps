@@ -2,6 +2,8 @@
 package TexasHoldem;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -154,6 +156,7 @@ public class RoundOfTexasHoldem {
 				return;
 			}
 			//Player does not have enough chips to open
+
 			System.out.println(players[(button+i)%numPlayers].getName() + "says: I cannot post the Small Blind. \n" + "I can't afford to play anymore");
 			
 			// removePlayer((button + i)%numPlayers);
@@ -183,6 +186,7 @@ public class RoundOfTexasHoldem {
 
 				i++;
 			
+
 		}
 		players[(button+i+1)%numPlayers].postBlind(pot, bigBlind, "Big Blind");
 
@@ -221,26 +225,26 @@ public class RoundOfTexasHoldem {
 
 
 		//roundOpen(mainPot, players[(button+1)%numPlayers], players[(button+2)%numPlayers]);
-		canOpen(mainPot);
+		canOpen(pots.get(0));
 		//PRINTING PLAYER HAND
 		printPlayerHand();
 
 		// Game actions
 		// (call, raise, fold);
 		// Start betting sequence left of the big blind;
-		preflop(stake, numActive,pots.size()-1);
+		preflop(pots.get(0));
 
 		printPlayerHand();
 		//Whilst there are >= 2 players are still active;
-		flop(stake, numActive , pots.size()-1);
+		flop(pots.get(0));
 
 		printPlayerHand();
 		// Turn 4th community card (turn) is turned while there are >= 2 players active.
-		turn(stake, numActive , pots.size()-1);
+		turn(pots.get(0));
 
 		printPlayerHand();
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
-		river(stake, numActive , pots.size()-1);
+		river(pots.get(0));
 
 		printPlayerHand();
 		showdown();
@@ -265,55 +269,55 @@ public class RoundOfTexasHoldem {
 
 	}
 
-	private void preflop(Integer stake, Integer numActive, int potIndex){
+	private void preflop(PotTexasHoldem mainPot) {
 
 		System.out.println("---PREFLOP---");
 
 
 		int playerStart = button+3;	//3 becouse player left to big blind starts
 
-		bettingCycle(playerStart);
+		bettingCycle(mainPot, playerStart);
 	}
 
-	private void flop(Integer stake,Integer numActive, int potIndex){
+	private void flop(PotTexasHoldem mainPot){
 
 		System.out.println("---FLOP---");
 
 		// Turn 3 community (flop) cards
-		dealCommunity(3, pots.get(potIndex));
+		dealCommunity(3, mainPot);
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
 
-		bettingCycle(playerStart);
+		bettingCycle(mainPot, playerStart);
 
 	}
 
-	private void turn(Integer stake,Integer numActive, int potIndex){
+	private void turn(PotTexasHoldem mainPot){
 
 		System.out.println("---TURN---");
 
 
 		// Deal the turn card card
-		dealCommunity(1, pots.get(potIndex));
+		dealCommunity(1,mainPot);
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		bettingCycle(playerStart);
+		bettingCycle(mainPot, playerStart);
 	}
 
-	private void river(Integer stake, Integer numActive, int potIndex){
+	private void river(PotTexasHoldem mainPot){
 
 
 		System.out.println("---RIVER---");
 
 
 		// Deal the river card
-		dealCommunity(1, pots.get(potIndex));
+		dealCommunity(1,mainPot);
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
-		bettingCycle(playerStart);
+		bettingCycle(mainPot, playerStart);
 	}
 
 	private void showdown(){
@@ -351,117 +355,90 @@ public class RoundOfTexasHoldem {
 		}
 	}
 
-
-	public void bettingCycle(int playerStart) {
-		int indexCurrPot = pots.size()-1;
+	public void bettingCycle(PotTexasHoldem mainPot, int playerStart) {
+		int indexCurrPot = 0;
 		int stake = -1;
-		int numActive = pots.get(pots.size()-1).getNumPlayers();
+		int numActive = mainPot.getNumPlayers();
 
-		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 1) {
+		while (stake < mainPot.getCurrentStake() && numActive > 1) {
 
-			stake = pots.get(pots.size() - 1).getCurrentStake();
+			stake = mainPot.getCurrentStake();
 
-			PotTexasHoldem activePot = pots.get(indexCurrPot);
+			for (int i = 0; i < getNumPlayers(); i++) {
+				PlayerInterface currentPlayer = mainPot.getPlayer((playerStart + i) % mainPot.getNumPlayers());
 
-			for (int i = 0; i < activePot.getNumPlayers(); i++) {
-				PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i) % activePot.getNumPlayers());
-
-				if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
+				if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn()) {
 					continue;
+				}
 
-				//delay(DELAY_BETWEEN_ACTIONS);
+				delay(DELAY_BETWEEN_ACTIONS);
 
-
-				currentPlayer.nextAction(pots, indexCurrPot);
-
+				currentPlayer.nextAction(mainPot);
 
 				//actions after player's move
-				if (currentPlayer.hasFolded()) { //checks for fold
+				if (currentPlayer.isAllIn() || currentPlayer.hasFolded()) {
 					numActive--;
-
-					// removePlayer((playerStart + i) % activePot.getNumPlayers());
-					pots.get(indexCurrPot).removePlayer(currentPlayer);
-				}
-
-				if (currentPlayer.isAllIn()) {
-					addSidePot(currentPlayer, indexCurrPot);
-					numActive--;
-				}
-
-				//increase pot index when all players one of: at max stake, all-in, folded
-				PotTexasHoldem currPot = pots.get(indexCurrPot);
-				boolean potFull = true;
-				for (PlayerInterface player: currPot.getPlayers()) {
-					//if no change possible in pot
-
-					if(!(player.getStake() >= currPot.getMaxStake() || player.isAllIn() || player.hasFolded() || player == null)){
-						potFull = false;
-					}
-				}
-				if(potFull){
-					indexCurrPot++;
 				}
 			}
 		}
 	}
 
-	public void addSidePot(PlayerInterface allInPlayer, int indexCurrPot) {
-		boolean potAdded = false;
+	/*
+	*
+	* Sorts the player's in ascending order of stake
+	* for each player who's stake is less than the max player's stake
+	*
+	*
+	* */
+	ArrayList<PlayerInterface> newPotPlayers;
+	public ArrayList<PotTexasHoldem> newSidePots(PotTexasHoldem pot) {
+		ArrayList<PotTexasHoldem> sidePots = new ArrayList<>();
+		sidePots.add(pot);
 
-		for (PlayerInterface otherPlayer: pots.get(indexCurrPot).getPlayers()) {
+		newPotPlayers = new ArrayList<>(pot.getPlayers());
 
-			if(!(otherPlayer == null) && otherPlayer.isAllIn() && !Objects.equals(otherPlayer.getName(), allInPlayer.getName())){
-				if(otherPlayer.getStake() == pots.get(indexCurrPot).getMaxStake() && otherPlayer.getAllInAddition() == allInPlayer.getAllInAddition()){
-					pots.get(indexCurrPot).addToPot(allInPlayer.getAllInAddition());
-					potAdded = true;
-				}
-				else if(otherPlayer.getAllInAddition() > allInPlayer.getAllInAddition()){
-					//this side pot is before the other side pot
-					newSidePot(allInPlayer, indexCurrPot);
-					potAdded = true;
-				}
-				else {	//otherPlayer.getAllInAddition() < allInPlayer.getAllInAddition()
-					//this side pot is after the other side pot
-					newSidePot(allInPlayer, indexCurrPot+1);
-					potAdded = true;
-				}
+		Collections.sort(newPotPlayers, new Comparator<PlayerInterface>() {
+			@Override
+			public int compare(PlayerInterface p1, PlayerInterface p2) {
+				return p1.getStake() - p2.getStake();
+			}
+		});
+
+		int maxPlayerStake = newPotPlayers.get(newPotPlayers.size() - 1).getStake();
+
+		System.out.println(newPotPlayers);
+
+		for (int playerIndex = 0; playerIndex < newPotPlayers.size(); playerIndex++) {
+			//if(newPotPlayers.get(playerIndex).getStake() < maxPlayerStake  &&  newPotPlayers.get(playerIndex).getStake() > 0) {
+			if(newPotPlayers.get(playerIndex).isAllIn()){
+				addNewSidePot(newPotPlayers, sidePots, playerIndex);
 			}
 		}
 
-		if(!potAdded){		//if no other side pots
-			newSidePot(allInPlayer, indexCurrPot);
-		}
+		return sidePots;
 	}
 
-	public void newSidePot(PlayerInterface allInPlayer, int currPot) {
-		//current pot - can only have stake matching all-in player in this pot
-		int potMax = allInPlayer.getStake();	//max value allowed for each player in current pot
-		pots.get(currPot).setMaxStake(potMax);
+	public void addNewSidePot(ArrayList<PlayerInterface> XXXXnewPotPlayers, ArrayList<PotTexasHoldem> sidePots, int allInPlayer) {
+		int currPot = sidePots.size() - 1;
 
-		ArrayList<PlayerInterface> newPotPlayers = new ArrayList<PlayerInterface>(pots.get(currPot).getPlayers());
+		int potMax = newPotPlayers.get(allInPlayer).getStake();    //max value allowed for each player in current pot
+		sidePots.get(currPot).setMaxStake(potMax);
+
+		//ArrayList<PlayerInterface> nextPotPlayers = new ArrayList<>(newPotPlayers);
 		newPotPlayers.remove(allInPlayer);
 
 		PotTexasHoldem newPot = new PotTexasHoldem(newPotPlayers);
-		newPot.newPotStake(pots.get(currPot).getCurrentStake());
-		pots.add(currPot+1, newPot);
 
-		potOverflow(pots, currPot);
-		System.out.println("Initial total new pot: " + pots.get(pots.size()-1).getTotal());
-
-	}
-
-	public void potOverflow(ArrayList<PotTexasHoldem> pots, int currPot){
-		int overflow;	//remove excess from pot & add to next pot
-		for(int i =currPot; i < pots.size()-1; i++) {
-			overflow = 0;
-			for (PlayerInterface player: pots.get(i).getPlayers()) {
-				if(player.getStake() > pots.get(i).getMaxStake()){
-					overflow += player.getStake() - pots.get(i).getMaxStake();
-				}
-			}
-			pots.get(i).removeFromPot(overflow);
-			pots.get(i+1).addToPot(overflow);
+		for (int playerIndex = allInPlayer; playerIndex < newPotPlayers.size(); playerIndex++) {
+			int overflow = newPotPlayers.get(playerIndex).getStake() - potMax;
+			newPot.addToPot(overflow);
+			newPotPlayers.get(playerIndex).reduceStake(overflow);
+			sidePots.get(currPot).removeFromPot(overflow);
 		}
+
+		//if(newPot.getTotal() > 0){
+			sidePots.add(newPot);
+		//}
 	}
 	private void printPlayerHand(){
 		
