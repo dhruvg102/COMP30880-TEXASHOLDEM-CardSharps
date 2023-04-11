@@ -268,12 +268,12 @@ public class HoldemHand {
     }
 
     public boolean isStraight(List<Card> hand) {
-		return (hand.get(0).getValue() == (hand.get(1).getValue() + 1) % 14 && // ordered by rank
+		return (hand.get(0).getValue() == (hand.get(1).getValue() + 1) % 13 && // ordered by rank
                 hand.get(1).getValue() == hand.get(2).getValue() + 1 &&
                 hand.get(2).getValue() == hand.get(3).getValue() + 1 &&	
                 hand.get(3).getValue() == hand.get(4).getValue() + 1)
 				||
-                (hand.get(0).getValue() == (hand.get(1).getValue() - 1) % 14 &&  // ordered by game value
+                (hand.get(0).getValue() == (hand.get(1).getValue() - 1) % 13 &&  // ordered by game value
                 hand.get(1).getValue()  == hand.get(2).getValue() - 1 &&
                 hand.get(2).getValue()  == hand.get(3).getValue() - 1 &&	
                 hand.get(3).getValue()  == hand.get(4).getValue() - 1);

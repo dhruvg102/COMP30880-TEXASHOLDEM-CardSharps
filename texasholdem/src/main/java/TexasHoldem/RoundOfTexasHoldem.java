@@ -13,8 +13,6 @@ import poker.*;
 // A PokerGame is a sequence of RoundOfPoker's
 
 
-//TODO
-
 public class RoundOfTexasHoldem {	
 	public static final int DELAY_BETWEEN_ACTIONS	=	1000;  // number of milliseconds between game actions
 	
@@ -46,11 +44,7 @@ public class RoundOfTexasHoldem {
 		System.out.println("\n\nNew Deal:\n\n");
 		deal();
 
-		// canOpen();
 
-		//openRound();
-
-		//discard();
 	}
 		
 
@@ -112,46 +106,6 @@ public class RoundOfTexasHoldem {
 	}	
 	
 
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-	// Find the player with the best hand
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-
-	public int getNumBestPlayer(boolean display) {
-		int bestHandScore = 0, score = 0, bestPos = 0;
-		PlayerInterface bestPlayer = null, currentPlayer = null;
-			
-		for (int i = 0; i < getNumPlayers(); i++) {
-			currentPlayer = getPlayer(i);
-				
-			if (currentPlayer == null || currentPlayer.hasFolded())
-				continue;
-				
-			score = currentPlayer.getHand().getValue();
-				
-			if (score > bestHandScore) {
-				if (display) {
-					if (bestHandScore == 0)
-						System.out.println("> " + currentPlayer.getName() + " goes first:\n" + 
-											 currentPlayer.getHand());
-					else
-						System.out.println("> " + currentPlayer.getName() + " says 'Read them and weep:'\n" + 
-											 currentPlayer.getHand());
-				}
-				
-				bestPos		  = i;
-				bestHandScore = score;
-				bestPlayer    = currentPlayer;
-			}
-			else
-			if (display)
-				System.out.println("> " + currentPlayer.getName() + " says 'I lose':\n" + 
-										  currentPlayer.getHand());
-		}
-
-		return bestPos;
-	}
 		
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -194,7 +148,7 @@ public class RoundOfTexasHoldem {
 		}
 		int i = 1;
 		//Player to the left of the dealer posts the small blind
-		while( players[(button+i)%numPlayers]!=null && players[(button+i)%numPlayers].getBank()<smallBlind ){
+		while( players[(button+i)%numPlayers]!=null && players[(button+i)%numPlayers].getBank()<bigBlind ){
 			if(numPlayers<=1){
 				return;
 			}
@@ -269,15 +223,19 @@ public class RoundOfTexasHoldem {
 		// Start betting sequence left of the big blind;
 		preflop(stake, numActive,pots.size()-1);
 
+		printPlayerHand();
 		//Whilst there are >= 2 players are still active;
 		flop(stake, numActive , pots.size()-1);
 
+		printPlayerHand();
 		// Turn 4th community card (turn) is turned while there are >= 2 players active.
 		turn(stake, numActive , pots.size()-1);
 
+		printPlayerHand();
 		// Turn 5th community card (river) is turned if there are still >= 2 players active.
 		river(stake, numActive , pots.size()-1);
 
+		printPlayerHand();
 		showdown();
 	}
 
@@ -299,8 +257,6 @@ public class RoundOfTexasHoldem {
 		}
 
 	}
-
-
 
 	private void preflop(Integer stake, Integer numActive, int potIndex){
 
@@ -415,6 +371,7 @@ public class RoundOfTexasHoldem {
 				if (currentPlayer.hasFolded()) { //checks for fold
 					numActive--;
 
+					removePlayer((playerStart + i) % activePot.getNumPlayers());
 					pots.get(indexCurrPot).removePlayer(currentPlayer);
 				}
 

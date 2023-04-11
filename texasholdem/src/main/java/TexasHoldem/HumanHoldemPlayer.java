@@ -151,22 +151,9 @@ public class HumanHoldemPlayer implements PlayerInterface {
 		//FLAG to check if player had enough for blind
 		boolean enough = true;
 
-		if(bank < blindAmt) {
-			stake = stake + bank;
-            
-			pot.raiseStake(bank);
-			bank = 0;
-
-			//Change state to all - in ??
-			//TODO
-			enough=false;
-		}
-		else{
 			stake = stake + blindAmt;
-			pot.raiseStake(blindAmt);
+			pot.addStake(blindAmt);
 			bank = bank-blindAmt;
-
-		}
 
 		System.out.println("\n> " + getName() + " says: I post " + type + " with "+ blindAmt +" chip!\n");
 		return enough;
@@ -255,29 +242,28 @@ public class HumanHoldemPlayer implements PlayerInterface {
         PotTexasHoldem pot = pots.get(currPotIndex);
         if (hasFolded()) return;  // no longer in the game
 
-        if (isBankrupt() || pot.getCurrentStake() - getStake() > getBank()) {
+        if (isBankrupt() ) {
             // not enough money to cover the bet
-            if(shouldAllIn(pot)) {
-                allIn(pot);
-                return;
-            }
-
+            
             System.out.println("\n> " + getName() + " says: I'm out!\n");
 
             fold();
 
             return;
         }
-
-        if (pot.getCurrentStake() == 0) {
-            // first mover of the game
-
-            if (shouldOpen(pot))  // will this player open the betting?
-                openBetting(pot);
-            else
-                fold();
+        if(shouldAllIn(pot)) {
+            allIn(pot);
+            return;
         }
-        else {
+        // if (pot.getCurrentStake() == 0) {
+        //     // first mover of the game
+
+        //     if (shouldOpen(pot))  // will this player open the betting?
+        //         openBetting(pot);
+        //     else
+        //         fold();
+        // }
+        else if(!isAllIn()){
             if (pot.getCurrentStake() > getStake()) {
                 // existing bet must be covered
 
