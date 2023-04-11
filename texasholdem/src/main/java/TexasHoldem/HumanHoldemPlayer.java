@@ -274,7 +274,6 @@ public class HumanHoldemPlayer implements PlayerInterface {
             }
 
             else {
-                System.out.println(pot.getCurrentStake() + " " + getStake());
                 System.out.println("\n> " + getName() + " says: I check!\n");
             }
         }
