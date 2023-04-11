@@ -29,13 +29,29 @@ public class PostFlopMoveAnalyser {
 
     private int numberOfPlayers;
 
+    private int amountToBet = 0;
+
+    private int playerFunds;
+
+    private int potSize;
+
+    private int opponentsBet;
+
     private gameStage stage = gameStage.FLOP;
 
-    private holdemMoves nextMove = holdemMoves.FOLD;
+    private holdemMoves nextMove = holdemMoves.CALL;
 
-    public PostFlopMoveAnalyser(HoldemHand hand, int numberOfPlayers) {
+    public PostFlopMoveAnalyser(HoldemHand hand, int numberOfPlayers, int playerFunds, int potSize, int opponentsBet) {
         this.handAnalyser = new PostFlopHandAnalyser(hand);
         this.numberOfPlayers = numberOfPlayers;
+    }
+
+    public holdemMoves getNextMove() {
+        return nextMove;
+    }
+
+    public int getAmountToBet () {
+        return amountToBet;
     }
 
     public void decideNextMove() {
@@ -162,6 +178,42 @@ public class PostFlopMoveAnalyser {
                     }
                 }
             }
+        }
+    }
+
+    public void decideBettingAmount() {
+        if(nextMove == holdemMoves.CONTINUATIONBET) {
+            if(handAnalyser.isDry() && numberOfPlayers == 2) {
+                amountToBet = potSize / 2;
+            }
+            else {
+                amountToBet = (potSize / 4) * 3;
+            }
+        }
+        else if(nextMove == holdemMoves.RAISE) {
+            amountToBet = opponentsBet * 3;
+        }
+        else if(nextMove == holdemMoves.BET) {
+            /*Here bluffing is handled for weak hands and card combinations
+                The same metric for bet calculations is used as for continuation bet
+             */
+            if(handAnalyser.isWeakTwoPair() || !(handAnalyser.isMonsterHand()) || handAnalyser.isTrash() || handAnalyser.isGutshot() || handAnalyser.isOverCard()) {
+                if(handAnalyser.isDry() && numberOfPlayers == 2) {
+                    amountToBet = potSize / 2;
+                }
+                else {
+                    amountToBet = (potSize / 4) * 3;
+                }
+            }
+            else {
+                amountToBet = (potSize / 4) * 3;
+            }
+        }
+        else if(nextMove == holdemMoves.ALLIN) {
+            amountToBet = playerFunds;
+        }
+        else if(nextMove == holdemMoves.CALL) {
+            amountToBet = opponentsBet;
         }
     }
 }
