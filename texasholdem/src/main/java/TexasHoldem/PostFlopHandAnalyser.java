@@ -10,7 +10,7 @@ TODO ensure hold cards are preserved in position 0 and 1 in HoldemHand class
 
 public class PostFlopHandAnalyser {
     private HoldemHand hand;
-    private ArrayList<Card> holdCards = new ArrayList<Card>();
+    private ArrayList<Card> holdCards = new ArrayList<Card>();              //misspelled hole cards???
 
     private ArrayList<Card> communityCards = new ArrayList<Card>();
 
@@ -22,7 +22,7 @@ public class PostFlopHandAnalyser {
         this.holdCards.add(hand.getCard(0));
         this.holdCards.add(hand.getCard(1));
 
-        this.communityCards = (ArrayList<Card>) hand.getCommunityCards();
+        this.communityCards = (ArrayList<Card>) hand.getCommunityCards();       //TODO ensure casting is read correctly
 
         this.mergedHand.addAll(holdCards);
         this.mergedHand.addAll(communityCards);
@@ -93,7 +93,7 @@ public class PostFlopHandAnalyser {
             }
         }
 
-        if(!(holdCards.get(0).getValue() == holdCards.get(1).getValue())) {
+        if(holdCards.get(0).getValue() != holdCards.get(1).getValue()) {        //TODO ensure .getValue() is correct
             cardIsHighest = false;
         }
 
@@ -151,7 +151,7 @@ public class PostFlopHandAnalyser {
         int previousValue = -1;
         int currentValue;
 
-        if(hand.evaluateHand(mergedHand) != 100000000) { //TODO value of straight
+        if((hand.evaluateHand(mergedHand) <= 10000 && hand.evaluateHand(mergedHand) >= 10100) || hand.evaluateHand(mergedHand) <= 30000000 && hand.evaluateHand(mergedHand) >= 30000150) { //TODO value of straight (double check values)
             sortMergedHandAscending();
 
             for(int i = 0; i < mergedHand.size(); i++){

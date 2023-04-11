@@ -37,4 +37,19 @@ public class GameStateObserver {
 
         return gameObserver;
     }
+
+    public void advanceGameStage() {
+        if(stage == gameStage.PREFLOP) {
+            stage = gameStage.FLOP;
+        }
+        else if(stage == gameStage.FLOP) {
+            stage = gameStage.TURN;
+        }
+        else if(stage == gameStage.TURN) {
+            stage = gameStage.RIVER;
+        }
+        else {
+            stage = gameStage.PREFLOP;
+        }
+    }
 }

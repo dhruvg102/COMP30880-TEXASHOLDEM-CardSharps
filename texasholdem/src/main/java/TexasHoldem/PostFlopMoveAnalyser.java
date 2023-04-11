@@ -49,13 +49,13 @@ public class PostFlopMoveAnalyser {
 
     public holdemMoves getNextMove() {
         return nextMove;
-    }
+    }   //returning the analysed move (call decideNextMove() first)
 
     public int getAmountToBet () {
         return amountToBet;
     }
 
-    public void decideNextMove() {
+    public void decideNextMove() {          // post-flop hand analyser
         if(stage == gameStage.FLOP) {
             if(handAnalyser.isDry() && numberOfPlayers == 2) {
                 if(handAnalyser.isMonsterHand() || handAnalyser.isOverPair() || handAnalyser.isMonsterDraw()) {
@@ -182,6 +182,8 @@ public class PostFlopMoveAnalyser {
         }
     }
 
+
+    //TODO write simplified betting as currently oinly raise by 1 available
     public void decideBettingAmount() {
         if(nextMove == holdemMoves.CONTINUATIONBET) {
             if(handAnalyser.isDry() && numberOfPlayers == 2) {
