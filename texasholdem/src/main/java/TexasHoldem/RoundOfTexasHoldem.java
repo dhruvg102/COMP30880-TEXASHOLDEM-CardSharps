@@ -173,19 +173,6 @@ public class RoundOfTexasHoldem {
 
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
-	// Allow each player to discard some cards and receive new ones
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
-
-	/* public void discard() {
-		for (int i = 0; i < getNumPlayers(); i++) {
-			if (getPlayer(i) != null)
-				getPlayer(i).discard();
-		}
-	} */
-
-	//--------------------------------------------------------------------//
-	//--------------------------------------------------------------------//
 	// See if we can open a round (at least one player must have atg least
 	// a pair)
 	//--------------------------------------------------------------------//
@@ -219,13 +206,6 @@ public class RoundOfTexasHoldem {
 
 
 	}
-	// public boolean canOpen() {
-	// 	HoldemHand hand = getPlayer(getNumBestPlayer(false)).getHand();
-	// 	if (hand.isHigh()) // not good enough
-	// 		return false;
-	// 	else
-	// 		return true;
-	// }
 
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
