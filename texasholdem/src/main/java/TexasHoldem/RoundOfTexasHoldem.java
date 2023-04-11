@@ -333,8 +333,10 @@ public class RoundOfTexasHoldem {
 			bestPlayer = pot.getPlayer(0);
 			for (int i = 0; i < pot.getNumPlayers(); i++) {
 				currentPlayer = pot.getPlayer(i);
-				if (currentPlayer.getName() == null || currentPlayer.hasFolded())
+				if (currentPlayer.getName() == null || currentPlayer.hasFolded()){
 					continue;
+				}
+				System.out.println("Player " + currentPlayer.getName() + "'s hand: " + currentPlayer.getHand().getBestHand());
 				score = currentPlayer.getHand().getBestHandValue();
 				if (score > bestHandScore) {
 					bestPos = i;
@@ -367,7 +369,7 @@ public class RoundOfTexasHoldem {
 				if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
 					continue;
 
-				delay(DELAY_BETWEEN_ACTIONS);
+				//delay(DELAY_BETWEEN_ACTIONS);
 
 
 				currentPlayer.nextAction(pots, indexCurrPot);

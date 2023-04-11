@@ -134,12 +134,10 @@ public class HoldemHand {
         cards.addAll(playerHand);
 
         if(!communityCards.isEmpty() && communityCards!=null){
-
             cards.addAll(communityCards);
 
             List<List<Card>> possibleHands = generatePossibleHands(cards);
             List<Card> bestHand = null;
-            bestHandValue = 0;
 
             for (List<Card> hand : possibleHands){
                 int handValue = evaluateHand(hand.subList(0, 5));
@@ -148,7 +146,6 @@ public class HoldemHand {
                     bestHand = hand.subList(0, 5);
                 }
             }
-
             return bestHand;
         }
         
@@ -195,11 +192,11 @@ public class HoldemHand {
         } else if (isThreeOfAKind(hand)){
             return HandValue.THREES_VALUE.getHandValue() + hand.get(2).getValue();
         } else if (isTwoPair(hand)){
-            return HandValue.TWOPAIR_VALUE.getHandValue() + hand.get(1).getValue() + hand.get(3).getValue();
+            return HandValue.TWOPAIR_VALUE.getHandValue() + hand.get(1).getValue() + hand.get(3).getValue() + hand.get(4).getValue();
         } else if (isPair(hand)){
             return HandValue.PAIR_VALUE.getHandValue() + hand.get(2).getValue();
         } else {
-            return HandValue.HIGHCARD_VALUE.getHandValue() + (hand.get(4).getValue() == 1 ? 14 : hand.get(0).getValue());
+            return HandValue.HIGHCARD_VALUE.getHandValue() + (hand.get(4).getRank() == 1 ? 14 : hand.get(0).getValue());
         }
     }
 
