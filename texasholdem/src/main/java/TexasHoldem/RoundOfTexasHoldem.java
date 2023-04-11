@@ -191,6 +191,16 @@ public class RoundOfTexasHoldem {
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
 
+	public void removePlayer(PlayerInterface player){
+		PlayerInterface[] newPlayers = new PlayerInterface[players.length-1];
+		int count = 0;
+		for(int i = 0; i<players.length; i++){
+			if( players[i] != player){
+				newPlayers[count] = players[i];
+				count++;
+			}
+		}
+	}
 
 	public void canOpen() {
 
@@ -198,8 +208,9 @@ public class RoundOfTexasHoldem {
 		{
 			if(players[button+1].getBank()<smallBlind){
 				//Player does not have enough chips to open
-				System.out.println(players[button+2].getName() + "says: I cannot post the Small Blind. \n" +
-						"I can't afford to play anymore");
+				System.out.println(players[button+2].getName() + "says: I cannot post the Small Blind. \n" + "I can't afford to play anymore");
+				
+				removePlayer(players[button+1]);
 			}
 			else if(players[button+1].getBank()>=smallBlind){
 				System.out.println(players[button+1].getName() + "says: I can post the Small Blind");
@@ -208,11 +219,12 @@ public class RoundOfTexasHoldem {
 
 		//Player to the left of the small blind posts the big blind
 		{
-			if(players[button+2].getBank()<bigBlind)
+			if(players[button+2].getBank()<bigBlind){
 			//Player does not have enough chips to open
-				System.out.println(players[button+2].getName() + "says: I cannot post the Big Blind. . \n " +
-						"I can't afford to play anymore");
-			else if(players[button+2].getBank()<bigBlind)
+				System.out.println(players[button+2].getName() + "says: I cannot post the Big Blind. . \n " +"I can't afford to play anymore");
+				removePlayer(players[button+1]);
+			}
+			else if(players[button+2].getBank()>=bigBlind)
 			//Player does not have enough chips to open
 				System.out.println(players[button+2].getName() + "says: I can post the Big Blind.");
 		}
@@ -317,50 +329,12 @@ public class RoundOfTexasHoldem {
 			list.add(deck.dealNext());
 		}
 
+		System.out.println(list);
+
 		for(int i = 0; i < getNumPlayers();i++){
 			players[i].addCommunityCards(list);
 		}
 
-	}
-
-	public void bettingCycle(int playerStart) {
-		int indexCurrPot = pots.size()-1;
-		int stake = -1;
-		int numActive = pots.get(pots.size()-1).getNumPlayers();
-
-		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
-			stake = pots.get(pots.size() - 1).getCurrentStake();
-
-			PotTexasHoldem activePot = pots.get(indexCurrPot);
-
-			for (int i = 0; i < activePot.getNumPlayers(); i++) {
-				PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i) % activePot.getNumPlayers());
-
-				if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
-					continue;
-
-				//delay(DELAY_BETWEEN_ACTIONS);
-
-				if (numActive == 1) { //if only one player remains
-					currentPlayer.takePot(pots.get(pots.size() - 1));
-
-					System.out.println("\nNo Players left in the game.\n");
-					return;
-				}
-
-				currentPlayer.nextAction(pots, indexCurrPot);
-
-				//actions after player's move
-				if (currentPlayer.hasFolded()) { //checks for fold
-					numActive--;
-				}
-
-				if (currentPlayer.isAllIn()) {
-					addSidePot(currentPlayer, indexCurrPot);
-					indexCurrPot++;
-				}
-			}
-		}
 	}
 
 	private void preflop(Integer stake, Integer numActive, int potIndex){
@@ -440,7 +414,7 @@ public class RoundOfTexasHoldem {
 				if (currentPlayer == null || currentPlayer.hasFolded())
 					continue;
 
-				score = currentPlayer.getHand().getValue();
+				score = currentPlayer.getHand().evaluateHand(currentPlayer.getHand().getBestHand());
 				if (score > bestHandScore) {
 					bestPos = i;
 					bestHandScore = score;
@@ -490,11 +464,14 @@ public class RoundOfTexasHoldem {
 				//actions after player's move
 				if (currentPlayer.hasFolded()) { //checks for fold
 					numActive--;
+					pots.get(indexCurrPot).removePlayer(currentPlayer);
 				}
 
 				if (currentPlayer.isAllIn()) {
 					addSidePot(currentPlayer, indexCurrPot);
 					numActive--;
+					pots.get(indexCurrPot).removePlayer(currentPlayer);
+
 				}
 
 				//increase pot index when all players one of: at max stake, all-in, folded

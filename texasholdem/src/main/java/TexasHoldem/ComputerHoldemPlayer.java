@@ -3,6 +3,7 @@ import poker.*;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ComputerHoldemPlayer implements PlayerInterface{
@@ -94,6 +95,10 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     @Override
     public void dealTo(DeckOfCards deck) {
         hand = deck.dealHoldemHand();
+    }
+    @Override
+    public void addCommunityCards(List<Card> cards){
+        this.hand.addCommunityCards(cards);
     }
 
     @Override

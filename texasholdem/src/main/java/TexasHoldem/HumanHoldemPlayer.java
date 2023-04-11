@@ -153,6 +153,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
 		if(bank < blindAmt) {
 			stake = stake + bank;
+            
 			pot.raiseStake(bank);
 			bank = 0;
 
@@ -281,17 +282,23 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
                 if (shouldSee(pot)) {
                     seeBet(pots, currPotIndex);
-
-                    if (shouldRaise(pot))
-                        raiseBet(pots, currPotIndex);
                 }
-                else
+                else{
                     fold();
+                    return;
+               }
             }
+            if (shouldRaise(pot)){
+                raiseBet(pots, currPotIndex);
+                return;
+            }
+
             else {
+                System.out.println(pot.getCurrentStake() + " " + getStake());
                 System.out.println("\n> " + getName() + " says: I check!\n");
             }
         }
+
     }
 
     private String addCount(int count, String singular, String plural) {
