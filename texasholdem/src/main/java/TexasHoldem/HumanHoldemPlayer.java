@@ -3,6 +3,7 @@ package TexasHoldem;
 import poker.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HumanHoldemPlayer implements PlayerInterface {
 
@@ -26,21 +27,21 @@ public class HumanHoldemPlayer implements PlayerInterface {
         this.bank = money;
     }
 
-    public boolean askQuestion(String question) 	{
+    public boolean askQuestion(String question) {
         System.out.print("\n>> " + question + " (y/n)?  ");
-
         byte[] input = new byte[100];
-
         try {
             System.in.read(input);
-
-            for (int i = 0; i < input.length; i++)
-                if ((char)input[i] == 'y' || (char)input[i] == 'Y')
-                    return true;
+            if (input.length == 2 && (char) input[0] == 'y' || (char) input[0] == 'Y' && (char) input[1] == '\n') {
+                return true;
+            } else if (input.length == 2 && (char) input[0] == 'n'
+                    || (char) input[0] == 'N' && (char) input[1] == '\n') {
+                return false;
+            }
+        } catch (Exception e) {
         }
-        catch (Exception e){};
-
-        return false;
+        System.out.println("Invalid input. Please enter 'y' or 'n'.");
+        return askQuestion(question);
     }
 
     @Override
@@ -105,6 +106,12 @@ public class HumanHoldemPlayer implements PlayerInterface {
     public void dealTo(DeckOfCards deck) {
         hand = deck.dealHoldemHand();
     }
+
+    @Override
+    public void addCommunityCards(List<Card> cards){
+        this.hand.addCommunityCards(cards);
+    }
+
 
     @Override
     public void takePot(PotOfMoney pot) {

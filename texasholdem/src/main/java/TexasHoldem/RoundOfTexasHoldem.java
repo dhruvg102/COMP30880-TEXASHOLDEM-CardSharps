@@ -159,9 +159,10 @@ public class RoundOfTexasHoldem {
 				if (getPlayer(index).isBankrupt())
 					removePlayer(index);
 				else {
+					
 					getPlayer(index).reset();
 					getPlayer(index).dealTo(deck);
-					
+
 					System.out.println(getPlayer(index));
 				}
 			}
@@ -218,6 +219,13 @@ public class RoundOfTexasHoldem {
 
 
 	}
+	// public boolean canOpen() {
+	// 	HoldemHand hand = getPlayer(getNumBestPlayer(false)).getHand();
+	// 	if (hand.isHigh()) // not good enough
+	// 		return false;
+	// 	else
+	// 		return true;
+	// }
 
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -271,6 +279,12 @@ public class RoundOfTexasHoldem {
 
 		roundOpen(mainPot, players[button+1], players[button+2]);
 
+		//PRINTING PLAYER HAND
+		for (Card card : listPlayers.get(0).getHand().getHand()) {
+			System.out.println(card.getName());
+		}
+		
+
 		// Game actions
 		// (call, raise, fold);
 		// Start betting sequence left of the big blind;
@@ -296,12 +310,51 @@ public class RoundOfTexasHoldem {
 	//TODO
 	//Deal only to players still in game
 	private void dealCommunity(int numCards){
+		
+		List<Card> list = new ArrayList<>(); //define community cards as an array of cards for reference
+		
+		for(int j = 0; j < numCards; j++){
+			list.add(deck.dealNext());
+		}
+
 		for(int i = 0; i < getNumPlayers();i++){
-			for(int j = 0; j < numCards; j++){
-				//players[i].getHand().dealCard(deck.dealNext());
+			players[i].addCommunityCards(list);
+		}
+
+	}
+
+
+	//private void goAround(Integer playerStart, Integer numActive, PotTexasHoldem pot){
+	/*private void goAround(Integer playerStart, Integer numActive, int indexCurrPot){
+
+		PotTexasHoldem activePot = pots.get(indexCurrPot);
+
+		for (int i = 0; i < activePot.getNumPlayers() ; i++) {
+			PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i)% activePot.getNumPlayers());
+
+			if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
+				continue;
+
+			//delay(DELAY_BETWEEN_ACTIONS);
+
+			if (numActive == 1) { //if only one player remains
+				currentPlayer.takePot(pots.get(pots.size()-1));
+
+				System.out.println("\nNo Players left in the game.\n");
+				return;
+			}
+
+			currentPlayer.nextAction(pots, indexCurrPot);
+
+			if (currentPlayer.hasFolded()){ //checks for fold
+				numActive--;
+			}
+
+			if(currentPlayer.isAllIn()){
+				addSidePot(currentPlayer, indexCurrPot);
 			}
 		}
-	}
+	}*/
 
 	private void preflop(Integer stake, Integer numActive, int potIndex){
 
