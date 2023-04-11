@@ -94,6 +94,7 @@ public class RoundOfHoldemTest {
         player4.allIn(pots.get(2));
 
         //round.bettingCycle(2,1,0);
+        round.newSidePot(player2, 0);
 
 
         System.out.println("-----");
@@ -102,5 +103,24 @@ public class RoundOfHoldemTest {
         }
         System.out.println("-----");
 
+    }
+
+    @Test
+    public void testNewSidePot() {
+        round.setPots(pots);
+        assertEquals(5, pots.get(0).getNumPlayers());
+        round.newSidePot(player4, 0);
+        assertEquals(5, pots.get(0).getNumPlayers());
+        assertEquals(4, pots.get(1).getNumPlayers());
+    }
+
+    @Test
+    public void testAddSidePot() {
+        round.setPots(pots);
+        assertEquals(pots.get(0).getNumPlayers(), 5);
+        round.addSidePot(player4, 0);
+        assertEquals(pots.get(0).getNumPlayers(), 4);
+        round.addSidePot(player2, 0);
+        assertEquals(pots.get(0).getNumPlayers(), 5);
     }
 }
