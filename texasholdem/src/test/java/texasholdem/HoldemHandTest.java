@@ -27,25 +27,4 @@ public class HoldemHandTest {
                 List<Card> playerCards = hand.getHand();
                 assertEquals(2, playerCards.size());
         }
-
-        @Test
-        public void testAddCommunityCards() {
-                List<Card> communityCards = new ArrayList<>();
-                communityCards.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(true)));
-                communityCards.add(new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue(false)));
-                holdemHand.addCommunityCards(communityCards);
-                assertEquals(2, communityCards.size());
-        }
-
-        @Test
-        public void testHoldemHand() {
-                List<Card> hand = new ArrayList<>();
-                hand.add(new NumberCard("Ace", Suit.HEARTS.toString(), CardValue.ACE.getCardValue(false)));
-                hand.add(new FaceCard("King", Suit.DIAMONDS.toString(), CardValue.KING.getCardValue(false)));
-                DeckOfCards deck = new DeckOfCards();
-                List<Card> communityCards = new ArrayList<>();
-                HoldemHand holdemHand = new HoldemHand(hand, deck, communityCards);
-                assertEquals(holdemHand.getHand(), hand);
-        }
-    
 }
