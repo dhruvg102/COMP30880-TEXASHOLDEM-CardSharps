@@ -110,7 +110,7 @@ public class GameOfTexasHoldem
 	public static void main(String[] args) {
 		String[] names = {"Human", "Tom", "Dick", "Harry"};
 		
-		System.out.println("\nWelcome to the Automated Poker Machine ...\n\n");
+		System.out.println("\nWelcome to the Automated Texas Hold'em Machine ...\n\n");
 		
 		System.out.print("\nWhat is your name?  ");
 		

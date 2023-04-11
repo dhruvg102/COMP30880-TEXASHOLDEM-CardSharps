@@ -133,6 +133,7 @@ public class HoldemHand {
         List<Card> cards = new ArrayList<>();
         cards.addAll(playerHand);
         if(communityCards!=null){
+
             cards.addAll(communityCards);
         }
 
@@ -329,4 +330,6 @@ public class HoldemHand {
         }
         return true;
     }
+
+
 }
