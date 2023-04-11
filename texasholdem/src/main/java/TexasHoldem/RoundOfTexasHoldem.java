@@ -415,7 +415,6 @@ public class RoundOfTexasHoldem {
 		PlayerInterface bestPlayer = null, currentPlayer = null;
 
 		for (PotTexasHoldem pot: pots) {
-
 			if(pots.size() > 1) {		//if there's more than 1 pot say which pot it is
 				System.out.println("---For pot " + potNum + " ---");
 			}
@@ -433,7 +432,7 @@ public class RoundOfTexasHoldem {
 				if (currentPlayer == null || currentPlayer.hasFolded())
 					continue;
 
-				score = currentPlayer.getHand().getValue();
+				score = currentPlayer.getHand().evaluateHand(currentPlayer.getHand().getBestHand());
 				if (score > bestHandScore) {
 					bestPos = i;
 					bestHandScore = score;
@@ -535,19 +534,10 @@ public class RoundOfTexasHoldem {
 		int potMax = allInPlayer.getStake();	//max value allowed for each player in current pot
 		pots.get(currPot).setMaxStake(potMax);
 
-
-		System.out.println("Init: " + pots.get(currPot).getNumPlayers());
-		ArrayList<PlayerInterface> newPotPlayers = pots.get(currPot).getPlayers();
+		ArrayList<PlayerInterface> newPotPlayers = new ArrayList<PlayerInterface>(pots.get(currPot).getPlayers());
 		newPotPlayers.remove(allInPlayer);
 
-		System.out.println("post remove: " + players.length);
-		System.out.println("post remove: " + pots.get(currPot).getNumPlayers());
-
-
 		PotTexasHoldem newPot = new PotTexasHoldem(newPotPlayers);
-		/*//System.out.println("Num player pre remove newpot: " + newPot.getNumPlayers());
-		System.out.println("Init: " + pots.get(currPot).getNumPlayers());
-		newPot.removePlayer(allInPlayer);*/
 		newPot.newPotStake(pots.get(currPot).getCurrentStake());
 		pots.add(currPot+1, newPot);
 		System.out.println("Num player post remove: " + pots.get(currPot).getNumPlayers());
