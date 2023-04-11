@@ -240,6 +240,9 @@ public class HumanHoldemPlayer implements PlayerInterface {
     @Override
     public void nextAction(ArrayList<PotTexasHoldem> pots , int currPotIndex) {
         PotTexasHoldem pot = pots.get(currPotIndex);
+        if(!pot.getPlayers().contains(this)){
+            return;
+        }
         if (hasFolded()) return;  // no longer in the game
 
         if (isBankrupt() ) {

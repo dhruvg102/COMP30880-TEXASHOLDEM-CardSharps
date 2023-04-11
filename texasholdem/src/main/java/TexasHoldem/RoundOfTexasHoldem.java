@@ -156,7 +156,7 @@ public class RoundOfTexasHoldem {
 			//Player does not have enough chips to open
 			System.out.println(players[(button+i)%numPlayers].getName() + "says: I cannot post the Small Blind. \n" + "I can't afford to play anymore");
 			
-			removePlayer((button + i)%numPlayers);
+			// removePlayer((button + i)%numPlayers);
 			pot.removePlayer(players[(button + i)%numPlayers]);
 			i++;
 			
@@ -178,7 +178,7 @@ public class RoundOfTexasHoldem {
 			//Player does not have enough chips to open
 				System.out.println(players[(button+i+1)%numPlayers].getName() + "says: I cannot post the Big Blind. . \n " +"I can't afford to play anymore");
 				
-				removePlayer((button+i+1)%numPlayers);
+				// removePlayer((button+i+1)%numPlayers);
 				pot.removePlayer(players[(button + i)%numPlayers]);
 
 				i++;
@@ -250,7 +250,7 @@ public class RoundOfTexasHoldem {
 
 	//TODO
 	//Deal only to players still in game
-	private void dealCommunity(int numCards){
+	private void dealCommunity(int numCards, PotTexasHoldem pot){
 		List<Card> list = new ArrayList<>(); //define community cards as an array of cards for reference
 		
 		for(int j = 0; j < numCards; j++){
@@ -259,8 +259,8 @@ public class RoundOfTexasHoldem {
 
 		System.out.println(list);
 
-		for(int i = 0; i < getNumPlayers();i++){
-			players[i].addCommunityCards(list);
+		for(int i = 0; i < pot.getPlayers().size();i++){
+			pot.getPlayer(i).addCommunityCards(list);
 		}
 
 	}
@@ -280,7 +280,7 @@ public class RoundOfTexasHoldem {
 		System.out.println("---FLOP---");
 
 		// Turn 3 community (flop) cards
-		dealCommunity(3);
+		dealCommunity(3, pots.get(potIndex));
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
@@ -295,7 +295,7 @@ public class RoundOfTexasHoldem {
 
 
 		// Deal the turn card card
-		dealCommunity(1);
+		dealCommunity(1, pots.get(potIndex));
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
@@ -309,7 +309,7 @@ public class RoundOfTexasHoldem {
 
 
 		// Deal the river card
-		dealCommunity(1);
+		dealCommunity(1, pots.get(potIndex));
 
 		int playerStart = button+1;	//3 becouse player left to big blind starts
 
@@ -379,7 +379,7 @@ public class RoundOfTexasHoldem {
 				if (currentPlayer.hasFolded()) { //checks for fold
 					numActive--;
 
-					removePlayer((playerStart + i) % activePot.getNumPlayers());
+					// removePlayer((playerStart + i) % activePot.getNumPlayers());
 					pots.get(indexCurrPot).removePlayer(currentPlayer);
 				}
 
