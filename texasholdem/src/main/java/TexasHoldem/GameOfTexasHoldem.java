@@ -82,7 +82,7 @@ public class GameOfTexasHoldem
 		int button = 0;
 		while (getNumSolventPlayers() > 1) {
 			RoundOfTexasHoldem round = new RoundOfTexasHoldem(deck, players, smallBlind, button);
-			
+
 			round.play();
 
 			smallBlind++;

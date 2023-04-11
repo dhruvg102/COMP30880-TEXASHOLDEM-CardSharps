@@ -118,8 +118,8 @@ public class RoundOfHoldemTest {
 
     @Test
     public void testNewSidePotsIdea() {
-        round.setPots(pots);
-        player1.raiseBet(pots, );
+        //round.setPots(pots);
+        //player1.raiseBet(pots, );
     }
 
     @Test
@@ -142,23 +142,31 @@ public class RoundOfHoldemTest {
         System.out.println("pot0 total: " + pots.get(0).getTotal());
         player5.allIn(pots.get(0));
         System.out.println("pot0 total: " + pots.get(0).getTotal());
-        System.out.println("pot1 total: " + pots.get(1).getTotal());
+        //System.out.println("pot1 total: " + pots.get(1).getTotal());
 
-        assertEquals(1, pots.get(0).getMaxStake());
+        /*assertEquals(1, pots.get(0).getMaxStake());
         assertEquals(5,  pots.get(0).getTotal());
-        assertEquals(4,  pots.get(1).getTotal());
+        assertEquals(4,  pots.get(1).getTotal());*/
 
         //3rd cycle
-        player1.raiseBet(pots, 1);
-        player2.seeBet(pots, 1);
-        player3.seeBet(pots, 1);
-        player4.seeBet(pots, 1);
+        player1.raiseBet(pots, 0);
+        player2.seeBet(pots, 0);
+        player3.seeBet(pots, 0);
+        player4.seeBet(pots, 0);
 
-        assertEquals(3, pots.get(1).getCurrentStake());
+        /*assertEquals(3, pots.get(1).getCurrentStake());
+        assertEquals(5, pots.get(0).getTotal());
+        assertEquals(8, pots.get(1).getTotal());*/
+
+        pots = round.newSidePots(pots.get(0));
+        for (PotTexasHoldem pot:pots) {
+            System.out.println(pot.getTotal() + " total|players " + pot.getNumPlayers());
+        }
+        System.out.println(pots.size());
+
         assertEquals(5, pots.get(0).getTotal());
         assertEquals(8, pots.get(1).getTotal());
-        
-        pots = round.newSidePotsIdea(pots.get(0));
+
     }
     
     
