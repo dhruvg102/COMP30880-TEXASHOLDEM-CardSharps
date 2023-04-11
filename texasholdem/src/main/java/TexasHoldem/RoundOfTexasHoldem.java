@@ -506,6 +506,7 @@ public class RoundOfTexasHoldem {
 		boolean potAdded = false;
 
 		for (PlayerInterface otherPlayer: pots.get(indexCurrPot).getPlayers()) {
+
 			if(!(otherPlayer == null) && otherPlayer.isAllIn() && !Objects.equals(otherPlayer.getName(), allInPlayer.getName())){
 				if(otherPlayer.getStake() == pots.get(indexCurrPot).getMaxStake() && otherPlayer.getAllInAddition() == allInPlayer.getAllInAddition()){
 					pots.get(indexCurrPot).addToPot(allInPlayer.getAllInAddition());
