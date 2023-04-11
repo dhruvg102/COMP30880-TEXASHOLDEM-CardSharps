@@ -233,6 +233,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
     @Override
     public void nextAction(PotTexasHoldem pot) {
+
         if (hasFolded()) return;  // no longer in the game
 
         if (isBankrupt() ) {
@@ -267,7 +268,6 @@ public class HumanHoldemPlayer implements PlayerInterface {
             }
 
             else {
-                System.out.println(pot.getCurrentStake() + " " + getStake());
                 System.out.println("\n> " + getName() + " says: I check!\n");
             }
         }

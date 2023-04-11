@@ -237,6 +237,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 
     @Override
     public void nextAction(PotTexasHoldem pot) {
+
         if (hasFolded()) return;  // no longer in the game
 
         if (isBankrupt() ) {
