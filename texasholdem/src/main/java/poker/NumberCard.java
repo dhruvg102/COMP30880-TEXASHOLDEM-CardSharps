@@ -4,7 +4,7 @@ package poker;
 // This package provides classes necessary for implementing a game system for playing poker
 
 
-public class NumberCard extends Card implements Comparable<NumberCard>{
+public class NumberCard extends Card implements Comparable<Card>{
 	
 	//--------------------------------------------------------------------//
 	//--------------------------------------------------------------------//
@@ -21,7 +21,7 @@ public class NumberCard extends Card implements Comparable<NumberCard>{
 	}
 
 	@Override
-	public int compareTo(NumberCard other) {
+	public int compareTo(Card other) {
 		if (this.getRank() < other.getRank()) {
 			return -1;
 		} else if (this.getRank() > other.getRank()) {

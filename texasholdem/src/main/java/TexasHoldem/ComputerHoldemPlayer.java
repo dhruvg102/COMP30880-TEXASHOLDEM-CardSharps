@@ -102,12 +102,6 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     }
 
     @Override
-    public void addCommunityCards(List<Card> cards){
-        this.hand.addCommunityCards(cards);
-    }
-
-
-    @Override
     public void takePot(PotOfMoney pot) {
         System.out.println("\n> " + getName() + " says: I WIN " + addCount(pot.getTotal(), "chip", "chips") + "!\n");
         System.out.println(hand.toString());

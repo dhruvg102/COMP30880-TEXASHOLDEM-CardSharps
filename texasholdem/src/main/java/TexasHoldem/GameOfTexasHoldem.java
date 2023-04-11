@@ -79,12 +79,14 @@ public class GameOfTexasHoldem
 
 	public void play()	{
 		int smallBlind = INIT_SMALL_BLIND;
+		int button = 0;
 		while (getNumSolventPlayers() > 1) {
-			RoundOfTexasHoldem round = new RoundOfTexasHoldem(deck, players, smallBlind);
+			RoundOfTexasHoldem round = new RoundOfTexasHoldem(deck, players, smallBlind, button);
 			
 			round.play();
 
 			smallBlind++;
+			button++;
 			try {
 				System.out.print("\n\nPlay another round? Press 'q' to terminate this game ... ");
 				
