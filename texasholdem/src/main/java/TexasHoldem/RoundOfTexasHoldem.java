@@ -419,10 +419,6 @@ public class RoundOfTexasHoldem {
 				System.out.println("---For pot " + potNum + " ---");
 			}
 
-			System.out.println("Pot total:" + pot.getTotal());
-			System.out.println("Pot max stake:" + pot.getMaxStake());
-			System.out.println("Pot stake:" + pot.getCurrentStake());
-			System.out.println("Pot num players:" + pot.getNumPlayers());
 			for (PlayerInterface player: pot.getPlayers()) {
 				System.out.println("	player:" + player.getName());
 			}
@@ -541,8 +537,6 @@ public class RoundOfTexasHoldem {
 		PotTexasHoldem newPot = new PotTexasHoldem(newPotPlayers);
 		newPot.newPotStake(pots.get(currPot).getCurrentStake());
 		pots.add(currPot+1, newPot);
-		System.out.println("Num player post remove: " + pots.get(currPot).getNumPlayers());
-		System.out.println("players: " + pots.get(currPot+1).getNumPlayers());
 
 		potOverflow(pots, currPot);
 	}
