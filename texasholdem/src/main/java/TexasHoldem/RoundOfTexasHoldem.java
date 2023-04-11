@@ -243,7 +243,6 @@ public class RoundOfTexasHoldem {
 		this.pots = pots;
 	}
 
-	//TODO: Side bets Showdown
 	public void play(){
 
 		ArrayList<PlayerInterface> listPlayers = new ArrayList<>(Arrays.asList(players));
