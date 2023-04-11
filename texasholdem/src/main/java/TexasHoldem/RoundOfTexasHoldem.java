@@ -310,7 +310,6 @@ public class RoundOfTexasHoldem {
 	//TODO
 	//Deal only to players still in game
 	private void dealCommunity(int numCards){
-		
 		List<Card> list = new ArrayList<>(); //define community cards as an array of cards for reference
 		
 		for(int j = 0; j < numCards; j++){
