@@ -243,48 +243,44 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         PotTexasHoldem pot = pots.get(currPotIndex);
         if (hasFolded()) return;  // no longer in the game
 
-        if(shouldAllIn(pot)){
-            allIn(pot);
-            return;
-        }
-
-        if (isBankrupt()) {
+        if (isBankrupt() ) {
             // not enough money to cover the bet
+            
             System.out.println("\n> " + getName() + " says: I'm out!\n");
 
             fold();
 
             return;
         }
-
-
-        if (pot.getCurrentStake() == 0) {
-            // first mover of the game
-
-            if (shouldOpen(pot))  // will this player open the betting?
-                openBetting(pot);
-            else
-                fold();
+        if(shouldAllIn(pot)) {
+            allIn(pot);
+            return;
         }
-        else {
+   
+        else if(!isAllIn()){
             if (pot.getCurrentStake() > getStake()) {
+                // existing bet must be covered
+
                 if (shouldSee(pot)) {
                     seeBet(pots, currPotIndex);
                 }
-                else {
+                else{
                     fold();
                     return;
-                }
+               }
             }
             if (shouldRaise(pot)){
                 raiseBet(pots, currPotIndex);
+                return;
             }
+
             else {
-                System.out.println(getName() + " says: I check!");
+                System.out.println(pot.getCurrentStake() + " " + getStake());
+                System.out.println("\n> " + getName() + " says: I check!\n");
             }
         }
-    }
 
+    }
     private String addCount(int count, String singular, String plural) {
         if (count == 1 || count == -1)
             return count + " " + singular;

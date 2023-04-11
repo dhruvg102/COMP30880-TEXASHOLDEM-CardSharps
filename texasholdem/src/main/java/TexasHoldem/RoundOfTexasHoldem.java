@@ -150,6 +150,7 @@ public class RoundOfTexasHoldem {
 		//Player to the left of the dealer posts the small blind
 		while( players[(button+i)%numPlayers]!=null && players[(button+i)%numPlayers].getBank()<bigBlind ){
 			if(numPlayers<=1){
+				System.exit(0);;
 				return;
 			}
 			//Player does not have enough chips to open
@@ -163,11 +164,15 @@ public class RoundOfTexasHoldem {
 		players[(button+i)%numPlayers].postBlind(pot, smallBlind, "Small Blind");
 
 		if(numPlayers<=1){
+
 			return;
 		}
 		//Player to the left of the small blind posts the big blind
 		while( players[(button+i+1)%numPlayers]!=null && players[(button+i+1)%numPlayers].getBank()<bigBlind ){
 			if(numPlayers<=1){
+				System.exit(0);;
+
+
 				return;
 			}
 			//Player does not have enough chips to open
@@ -325,13 +330,12 @@ public class RoundOfTexasHoldem {
 			}
 
 
-			
+			bestPlayer = pot.getPlayer(0);
 			for (int i = 0; i < pot.getNumPlayers(); i++) {
 				currentPlayer = pot.getPlayer(i);
-				if (currentPlayer == null || currentPlayer.hasFolded())
+				if (currentPlayer.getName() == null || currentPlayer.hasFolded())
 					continue;
-
-				score = currentPlayer.getHand().evaluateHand(currentPlayer.getHand().getBestHand());
+				score = currentPlayer.getHand().getBestHandValue();
 				if (score > bestHandScore) {
 					bestPos = i;
 					bestHandScore = score;

@@ -255,14 +255,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
             allIn(pot);
             return;
         }
-        // if (pot.getCurrentStake() == 0) {
-        //     // first mover of the game
-
-        //     if (shouldOpen(pot))  // will this player open the betting?
-        //         openBetting(pot);
-        //     else
-        //         fold();
-        // }
+   
         else if(!isAllIn()){
             if (pot.getCurrentStake() > getStake()) {
                 // existing bet must be covered

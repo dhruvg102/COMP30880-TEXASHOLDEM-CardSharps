@@ -132,24 +132,29 @@ public class HoldemHand {
     public List<Card> getBestHand(){ //returns the best hand a player can have - gets a value from evaluatehand
         List<Card> cards = new ArrayList<>();
         cards.addAll(playerHand);
-        if(communityCards!=null){
+
+        if(!communityCards.isEmpty() && communityCards!=null){
 
             cards.addAll(communityCards);
-        }
 
-        List<List<Card>> possibleHands = generatePossibleHands(cards);
-        List<Card> bestHand = null;
-        bestHandValue = 0;
+            List<List<Card>> possibleHands = generatePossibleHands(cards);
+            List<Card> bestHand = null;
+            bestHandValue = 0;
 
-        for (List<Card> hand : possibleHands){
-            int handValue = evaluateHand(hand.subList(0, 5));
-            if (handValue > bestHandValue) {
-                bestHandValue = handValue;
-                bestHand = hand.subList(0, 5);
+            for (List<Card> hand : possibleHands){
+                int handValue = evaluateHand(hand.subList(0, 5));
+                if (handValue > bestHandValue) {
+                    bestHandValue = handValue;
+                    bestHand = hand.subList(0, 5);
+                }
             }
+
+            return bestHand;
         }
-        return bestHand;
+        
+        return cards;
     }
+
   
     //Permutations of all possible hands
     public static List<List<Card>> generatePossibleHands(List<Card> list) {
