@@ -142,11 +142,11 @@ public class PreFlopMoveAnalyser {
     }
 
     //TODO unsure if this weakens the purpose of matrices
-    public boolean shouldSee() {
+    public boolean shouldCall() {
         return getHandRank() <= 8;
     }
 
     public boolean shouldFold() {
-        return !(shouldRaise() || shouldSee());
+        return !(shouldRaise() || shouldCall());
     }
 }
