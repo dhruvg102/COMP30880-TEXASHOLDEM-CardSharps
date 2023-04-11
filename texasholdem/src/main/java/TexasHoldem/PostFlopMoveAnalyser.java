@@ -2,6 +2,7 @@ package TexasHoldem;
 
 public class PostFlopMoveAnalyser {
     private enum gameStage {
+        PREFLOP,
         FLOP,
         TURN,
         RIVER
