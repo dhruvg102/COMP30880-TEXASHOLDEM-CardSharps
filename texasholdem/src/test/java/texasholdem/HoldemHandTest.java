@@ -28,6 +28,7 @@ public class HoldemHandTest {
                 assertEquals(2, playerCards.size());
         }
 
+
         @Test
         public void testAddCommunityCards() {
                 List<Card> communityCards = new ArrayList<>();

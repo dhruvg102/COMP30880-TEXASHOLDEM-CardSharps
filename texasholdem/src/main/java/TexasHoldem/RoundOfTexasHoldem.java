@@ -208,6 +208,7 @@ public class RoundOfTexasHoldem {
 		{
 			if(players[button+1].getBank()<smallBlind){
 				//Player does not have enough chips to open
+
 				System.out.println(players[button+2].getName() + "says: I cannot post the Small Blind. \n" + "I can't afford to play anymore");
 				
 				removePlayer(players[button+1]);
@@ -219,6 +220,7 @@ public class RoundOfTexasHoldem {
 
 		//Player to the left of the small blind posts the big blind
 		{
+
 			if(players[button+2].getBank()<bigBlind){
 			//Player does not have enough chips to open
 				System.out.println(players[button+2].getName() + "says: I cannot post the Big Blind. . \n " +"I can't afford to play anymore");
@@ -312,12 +314,19 @@ public class RoundOfTexasHoldem {
 		river(stake, numActive , pots.size()-1);
 
 		showdown();
+
 	}
 
 	private void roundOpen(PotTexasHoldem pot, PlayerInterface playerSmallBlind, PlayerInterface playerBigBlind) {
+
+		//Post small blind
 		playerSmallBlind.postBlind(pot, smallBlind, "Small Blind");
-		playerBigBlind.postBlind(pot, bigBlind, "Big Blind");
+		//Post big blind
+		playerSmallBlind.postBlind(pot, bigBlind, "Big Blind");
+
 	}
+
+
 
 	//TODO
 	//Deal only to players still in game
@@ -335,6 +344,52 @@ public class RoundOfTexasHoldem {
 			players[i].addCommunityCards(list);
 		}
 
+	}
+
+
+	public void bettingCycle(int playerStart) {
+		System.out.println("BETTING CYCLE");
+		int indexCurrPot = pots.size()-1;
+		int stake = -1;
+		int numActive = pots.get(pots.size()-1).getNumPlayers();
+
+		while (stake < pots.get(pots.size()-1).getCurrentStake() && numActive > 0) {
+			System.out.println("BETTING WHILE CYCLE");
+
+			stake = pots.get(pots.size() - 1).getCurrentStake();
+
+			PotTexasHoldem activePot = pots.get(indexCurrPot);
+
+			for (int i = 0; i < activePot.getNumPlayers(); i++) {
+				PlayerInterface currentPlayer = activePot.getPlayer((playerStart + i) % activePot.getNumPlayers());
+
+				if (currentPlayer == null || currentPlayer.hasFolded() || currentPlayer.isAllIn())
+					continue;
+
+				//delay(DELAY_BETWEEN_ACTIONS);
+
+				if (numActive == 1) { //if only one player remains
+					currentPlayer.takePot(pots.get(pots.size() - 1));
+
+					System.out.println("\nNo Players left in the game.\n");
+					return;
+				}
+
+				currentPlayer.nextAction(pots, indexCurrPot);
+				System.out.println("BETTING CYCLE ACTION");
+
+
+				//actions after player's move
+				if (currentPlayer.hasFolded()) { //checks for fold
+					numActive--;
+				}
+
+				if (currentPlayer.isAllIn()) {
+					addSidePot(currentPlayer, indexCurrPot);
+					indexCurrPot++;
+				}
+			}
+		}
 	}
 
 	private void preflop(Integer stake, Integer numActive, int potIndex){
@@ -396,6 +451,7 @@ public class RoundOfTexasHoldem {
 		PlayerInterface bestPlayer = null, currentPlayer = null;
 
 		for (PotTexasHoldem pot: pots) {
+
 
 			if(pots.size() > 1) {		//if there's more than 1 pot say which pot it is
 				System.out.println("---For pot " + potNum + " ---");
