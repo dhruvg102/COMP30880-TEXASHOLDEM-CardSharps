@@ -4,7 +4,7 @@ package poker;
 // This package provides classes necessary for implementing a game system for playing poker
 
 
-public class Card
+public class Card  implements Comparable<Card>//comparable? TODO:
 {
 	private String suit		= "";	// "hearts", "clubs", "diamonds", "spades"
 	private String name     = "";	// "Ace", "Deuce", "Three", ..., "Jack", "Queen", "King"

@@ -3,6 +3,7 @@ import poker.*;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ComputerHoldemPlayer implements PlayerInterface{
@@ -95,6 +96,10 @@ public class ComputerHoldemPlayer implements PlayerInterface{
     public void dealTo(DeckOfCards deck) {
         hand = deck.dealHoldemHand();
     }
+    @Override
+    public void addCommunityCards(List<Card> cards){
+        this.hand.addCommunityCards(cards);
+    }
 
     @Override
     public void takePot(PotOfMoney pot) {
@@ -136,7 +141,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 
 		if(bank < blindAmt) {
 			stake = stake + bank;
-			pot.raiseStake(bank);
+			pot.addStake(bank);
 			bank = 0;
 
 			//Change state to all - in ??
@@ -145,7 +150,7 @@ public class ComputerHoldemPlayer implements PlayerInterface{
 		}
 		else{
 			stake = stake + blindAmt;
-			pot.raiseStake(blindAmt);
+			pot.addStake(stake);
 			bank = bank-blindAmt;
 
 		}
@@ -263,19 +268,19 @@ public class ComputerHoldemPlayer implements PlayerInterface{
         }
         else {
             if (pot.getCurrentStake() > getStake()) {
-                // existing bet must be covered
-
                 if (shouldSee(pot)) {
                     seeBet(pots, currPotIndex);
-
-                    if (shouldRaise(pot))
-                        raiseBet(pots, currPotIndex);
                 }
-                else
+                else {
                     fold();
+                    return;
+                }
+            }
+            if (shouldRaise(pot)){
+                raiseBet(pots, currPotIndex);
             }
             else {
-                System.out.println("\n> " + getName() + " says: I check!\n");
+                System.out.println(getName() + " says: I check!");
             }
         }
     }

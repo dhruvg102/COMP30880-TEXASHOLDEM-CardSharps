@@ -23,7 +23,7 @@ public class RoundOfHoldemTest {
 
     private PlayerInterface[] players = {player1,player2,player3,player4,player5};
 
-    private RoundOfTexasHoldem round = new RoundOfTexasHoldem(new DeckOfCards(), players, 1);
+    private RoundOfTexasHoldem round = new RoundOfTexasHoldem(new DeckOfCards(), players, 1, 0);
 
     ArrayList<PotTexasHoldem> pots = new ArrayList<PotTexasHoldem>();
 
@@ -94,6 +94,7 @@ public class RoundOfHoldemTest {
         player4.allIn(pots.get(2));
 
         //round.bettingCycle(2,1,0);
+        round.newSidePot(player2, 0);
 
 
         System.out.println("-----");
@@ -102,5 +103,24 @@ public class RoundOfHoldemTest {
         }
         System.out.println("-----");
 
+    }
+
+    @Test
+    public void testNewSidePot() {
+        round.setPots(pots);
+        assertEquals(5, pots.get(0).getNumPlayers());
+        round.newSidePot(player4, 0);
+        assertEquals(5, pots.get(0).getNumPlayers());
+        assertEquals(4, pots.get(1).getNumPlayers());
+    }
+
+    @Test
+    public void testAddSidePot() {
+        round.setPots(pots);
+        assertEquals(pots.get(0).getNumPlayers(), 5);
+        round.addSidePot(player4, 0);
+        assertEquals(pots.get(0).getNumPlayers(), 4);
+        round.addSidePot(player2, 0);
+        assertEquals(pots.get(0).getNumPlayers(), 5);
     }
 }

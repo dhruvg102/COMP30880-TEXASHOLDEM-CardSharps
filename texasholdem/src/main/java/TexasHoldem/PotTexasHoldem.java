@@ -1,7 +1,5 @@
 package TexasHoldem;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import poker.PotOfMoney;
 
@@ -52,6 +50,7 @@ public class PotTexasHoldem extends PotOfMoney{
         clearPot();
         addToPot(amount);
     }
+
 
     public int getMaxStake() {
         return maxStake;

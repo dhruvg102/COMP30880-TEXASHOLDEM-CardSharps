@@ -5,39 +5,32 @@ import java.util.*;
 
 public class HoldemHand {
     //enum for cardvalue, suit, risk and handvalue
-
     public enum CardValue{
-        ACE(1, true, "Ace"),
-        DEUCE(2, false, "Two"),
-        THREE(3, false, "Three"),
-        FOUR(4, false, "Four"),
-        FIVE(5, false, "Five"),
-        SIX(6, false, "Six"),
-        SEVEN(7, false, "Seven"),
-        EIGHT(8, false, "Eight"),
-        NINE(9, false, "Nine"),
-        TEN(10, false, "Ten"),
-        JACK(11, false, "Jack"),
-        QUEEN(12, false, "Queen"),
-        KING(13, false, "King");
+        ACE(1, "Ace"),
+        DEUCE(2, "Two"),
+        THREE(3, "Three"),
+        FOUR(4, "Four"),
+        FIVE(5, "Five"),
+        SIX(6, "Six"),
+        SEVEN(7, "Seven"),
+        EIGHT(8, "Eight"),
+        NINE(9, "Nine"),
+        TEN(10, "Ten"),
+        JACK(11, "Jack"),
+        QUEEN(12, "Queen"),
+        KING(13, "King");
 
         private final int value;
-        private final boolean isAceHigh;
         private final String name;
-        public static final int ACE_HIGH_VALUE = 14;
+     
 
-        private CardValue(int value, boolean isAceHigh, String name){
+        private CardValue(int value, String name){
             this.value = value;
-            this.isAceHigh = isAceHigh;
             this.name = name;
         }
 
-        public int getCardValue(boolean isAceHigh) {
-            return this == ACE ? (isAceHigh ? ACE_HIGH_VALUE : 1) : value;
-        }
-
         private int getCardValue() {
-            return getCardValue(isAceHigh);
+            return value;
         }
 
         @Override
@@ -58,6 +51,10 @@ public class HoldemHand {
             this.cardSuit = cardSuit;
         }
 
+        public String getSuit(){
+            return cardSuit;
+        }
+
         @Override
         public String toString(){
             return cardSuit;
@@ -65,15 +62,15 @@ public class HoldemHand {
     }
 
     public enum HandValue {
-        ROYALFLUSH_VALUE(2000000000),
-        STRAIGHTFLUSH_VALUE(1000000000),
-        STRAIGHT_VALUE(100000000),
-        FOURS_VALUE(10000000),
-        FLUSH_VALUE(1000000),
-        FULLHOUSE_VALUE(100000),
-        THREES_VALUE(10000),
-        TWOPAIR_VALUE(1000),
-        PAIR_VALUE(100),
+        ROYALFLUSH_VALUE(40000000),
+        STRAIGHTFLUSH_VALUE(30000000),
+        FOURS_VALUE(20000000),
+        FULLHOUSE_VALUE(1000000),
+        FLUSH_VALUE(100000),
+        STRAIGHT_VALUE(10000),
+        THREES_VALUE(1000),
+        TWOPAIR_VALUE(100),
+        PAIR_VALUE(10),
         HIGHCARD_VALUE(0);
 
         private final int value;
@@ -97,7 +94,8 @@ public class HoldemHand {
         THREES_RISK(30),
         TWOPAIR_RISK(35),
         PAIR_RISK(40),
-        HIGHCARD_RISK(90);
+        HIGHCARD_RISK(90),
+        DEFAULT_RISK(20);
 
         private final int risk;
 
@@ -110,113 +108,99 @@ public class HoldemHand {
         }
     }
 
-
-    public static final int DEFAULT_RISK = 20;
     public static final int INIT_PLAYER_CARDS = 2; // total number of cards to be determined
     public static final int NUM_COMMUNITY_CARDS = 5;
     public static final int TOTAL_CARDS = INIT_PLAYER_CARDS+NUM_COMMUNITY_CARDS;
     
     private List<Card> communityCards; //define community cards as an array of cards for reference
     private List<Card> playerHand; //define playerHand as an array of cards
-    private DeckOfCards deck; //define field of deck
-
-    public HoldemHand(List<Card> hand, DeckOfCards deck, List<Card> communityCards){
-        this.playerHand = hand; //init playerHand
-        this.deck = deck; //init deck
-        this.communityCards = communityCards;
-    }
+    private int bestHandValue; //used to get players best hand to determine winner
 
     public HoldemHand(DeckOfCards deck){
-        this.deck = deck;
         this.playerHand = new ArrayList<>();
         this.playerHand.add(deck.dealNext());
         this.playerHand.add(deck.dealNext());
+        
         this.communityCards = new ArrayList<>();
+        this.bestHandValue = 0;
     }
 
-
-    public void addCommunityCards(List<Card> communityCards){
-        this.playerHand.addAll(communityCards);
+    public void addCommunityCards(List<Card> cards){
+        this.communityCards.addAll(cards);
     }
 
-    public List<Card> getBestHand(){
-        List<List<Card>> possibleHands = generatePossibleHands();
+    public List<Card> getBestHand(){ //returns the best hand a player can have - gets a value from evaluatehand
+        List<Card> cards = new ArrayList<>();
+        cards.addAll(playerHand);
+        if(communityCards!=null){
+
+            cards.addAll(communityCards);
+        }
+
+        List<List<Card>> possibleHands = generatePossibleHands(cards);
         List<Card> bestHand = null;
-        int bestHandValue = 0;
+        bestHandValue = 0;
 
         for (List<Card> hand : possibleHands){
-            int handValue = evaluateHand(hand);
+            int handValue = evaluateHand(hand.subList(0, 5));
             if (handValue > bestHandValue) {
                 bestHandValue = handValue;
-                bestHand = hand;
+                bestHand = hand.subList(0, 5);
             }
         }
         return bestHand;
     }
-
-    public List<List<Card>> generatePossibleHands(){        //TODO possible create seperate communityHand which is passed
-        List<List<Card>> possibleHands = new ArrayList<>(); //store possible hands
-        for (int i = 0; i < playerHand.size() - 1; i++) { //iterates through all cards except for last
-            for (int j = i + 1; j < playerHand.size(); j++) { //iterates all cards in players hand after current card in outer loop (ensure theres 2 cards)
-                List<Card> hand = new ArrayList<>(); //hold current possible hand
-                hand.add(playerHand.get(i)); //adds current card from outer loop
-                hand.add(playerHand.get(j)); //add current card from inner loop
-                for (int k = 0; k < playerHand.size(); k++) { //iterates through all cards in player hand
-                    if (k != i && k != j) { //checks current card is not equal to cards in possible hand
-                        hand.add(playerHand.get(k)); //adds current card to possible hand if not in hand
-                    }
-                }
-                possibleHands.add(hand); //adds current possible hand to list of all possible
+  
+    //Permutations of all possible hands
+    public static List<List<Card>> generatePossibleHands(List<Card> list) {
+        if (list.isEmpty()) {
+            List<List<Card>> result = new ArrayList<List<Card>>();
+            result.add(new ArrayList<Card>());
+            return result;
+        }
+    
+        List<List<Card>> possibleHands = new ArrayList<List<Card>>();
+        Card firstElement = list.remove(0);
+        List<List<Card>> recursiveReturn = generatePossibleHands(list);
+        for (List<Card> li : recursiveReturn) {
+    
+            for (int index = 0; index <= li.size(); index++) {
+                List<Card> temp = new ArrayList<Card>(li);
+                temp.add(index, firstElement);
+                possibleHands.add(temp);
             }
         }
         return possibleHands;
     }
 
-    public int evaluateHand(List<Card> hand) {
-        sortHand();
-        if (isRoyalFlush()){
+    public int evaluateHand(List<Card> hand) { //returns hand value from all possible hands
+        sortHand(hand);
+        if (isRoyalFlush(hand)){
             return HandValue.ROYALFLUSH_VALUE.getHandValue();
-        } else if (isStraightFlush()){
-            return HandValue.STRAIGHTFLUSH_VALUE.getHandValue() + hand.get(4).getValue();
-        } else if (isFourOfAKind()){
+        } else if (isStraightFlush(hand)){
+            return HandValue.STRAIGHTFLUSH_VALUE.getHandValue() + hand.get(4).getValue(); 
+        } else if (isFourOfAKind(hand)){
             return HandValue.FOURS_VALUE.getHandValue() + hand.get(2).getValue();
-        } else if (isFullHouse()){
+        } else if (isFullHouse(hand)){
             return HandValue.FULLHOUSE_VALUE.getHandValue() + hand.get(2).getValue();
-        } else if (isFlush()){
-            int value = 0;
-            for (int i = 0; i < 5; i++) {
-                value += hand.get(i).getValue() * Math.pow(100, i);
-            }
-            return HandValue.FLUSH_VALUE.getHandValue() + value;
-        } else if (isStraight()){
+        } else if (isFlush(hand)){
+            return HandValue.FLUSH_VALUE.getHandValue() + hand.get(1).getValue() + hand.get(2).getValue();
+        } else if(isStraight(hand)){
             return HandValue.STRAIGHT_VALUE.getHandValue() + hand.get(4).getValue();
-        } else if (isThreeOfAKind()){
+        } else if (isThreeOfAKind(hand)){
             return HandValue.THREES_VALUE.getHandValue() + hand.get(2).getValue();
-        } else if (isPair()){ //added pair
+        } else if (isTwoPair(hand)){
+            return HandValue.TWOPAIR_VALUE.getHandValue() + hand.get(1).getValue() + hand.get(3).getValue();
+        } else if (isPair(hand)){
             return HandValue.PAIR_VALUE.getHandValue() + hand.get(2).getValue();
         } else {
-            int value = 0;
-            for (int i = 0; i < 5; i++){
-                value += hand.get(i).getValue() * Math.pow(100, i);
-            }
-            return HandValue.HIGHCARD_VALUE.getHandValue() + value;
+            return HandValue.HIGHCARD_VALUE.getHandValue() + (hand.get(4).getValue() == 1 ? 14 : hand.get(0).getValue());
         }
     }
 
-
-    public void sortHand() {
-        //playerHand.sort(Collections.reverseOrder());
-        Collections.sort(playerHand, Collections.reverseOrder()); // descending order, maybe need to sort by value
-                                                                  // instead? I think this does by name
+    public void sortHand(List<Card> hand) { //sorts in descending order
+        Collections.sort(hand, Collections.reverseOrder());
     }
-
-
-    public int getRiskWorthiness(){ //We override this value for specific hands such as Straight, FullHouse etc..
-        return DEFAULT_RISK; //TODO - Change to enum with setter inside
-
-        //use evaluate hand and return value in enum based on the card evaluation, e.g if royal flush return RiskWorthiness.ROYALFLUSH_RISK
-    }
-
 
     //Display a hand
     public String toString() {
@@ -257,137 +241,95 @@ public class HoldemHand {
         return getCard(0).getValue(); // simply return the value of the higest card
     }
 
-    public List<Card> getHand(){
+    public List<Card> getHand(){ //get the players list of cards
         return new ArrayList<>(playerHand);
     }
 
-    public List<Card> getFullHand(){
-        List<Card> allCards = new ArrayList<>();
-        allCards.addAll(playerHand);
-        allCards.addAll(communityCards);
-        return allCards;
+    public int getBestHandValue(){ //getter for bestHand value using evaluateHands method
+        return this.bestHandValue;
     }
 
-
-    //Hand Classifiers TODO: Ensure this works on implmentation of game - may need to fix sort to cardvalue!
-    public boolean isFourOfAKind() {
-        sortHand();
-        /*
-         * IF card 1 == card 4 (checks index for sorted cards etc)
-         * || card 2 == card 5
-         */
-        return playerHand.get(0).getValue() == playerHand.get(3).getValue()
-                || playerHand.get(1).getValue() == playerHand.get(4).getValue();
+    public int getRiskWorthiness() { // We override this value for specific hands such as Straight, FullHouse etc..
+        return RiskWorthiness.DEFAULT_RISK.getRiskValue();
     }
 
-    public boolean isFullHouse() {
-        sortHand();
-        return playerHand.get(0).getValue() == playerHand.get(1).getValue()
-                && playerHand.get(2).getValue() == playerHand.get(4).getValue()
-                || playerHand.get(0).getValue() == playerHand.get(2).getValue()
-                        && playerHand.get(3).getValue() == playerHand.get(4).getValue();
+    //Hand classifiers
+    public boolean isFourOfAKind(List<Card> hand) {
+        return hand.get(0).getValue() == hand.get(3).getValue() 
+                ||
+                hand.get(1).getValue() == hand.get(4).getValue();
     }
 
-    public boolean isStraight() {
-        sortHand();
-        boolean isAceLow = playerHand.get(0).getValue() == CardValue.ACE.getCardValue(false);
-        int count = 0;
-        for (int i = 1; i < 5; i++) {
-            if (playerHand.get(i).getValue() == playerHand.get(i - 1).getValue() - 1) {
-                count++;
-            } else if (playerHand.get(i).getValue() == playerHand.get(i - 1).getValue()) {
-                continue; //this may break stuff as there is no condition (e.g get stuck here)
-            } else if (isAceLow && playerHand.get(i).getValue() == CardValue.FIVE.getCardValue()) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count == 4;
+    public boolean isFullHouse(List<Card> hand) { //player has a pair and three of a kind
+        return (hand.get(0).getValue() == hand.get(1).getValue()
+                && hand.get(2).getValue() == hand.get(4).getValue())
+                || (hand.get(0).getValue() == hand.get(2).getValue()
+                && hand.get(3).getValue() == hand.get(4).getValue());
     }
 
-    public boolean isFlush() {
-        // returns true if all cards in the hand are the same suit
-        for (int i = 1; i < 5; i++) {
-            if (playerHand.get(i).getSuit().equals(playerHand.get(0).getSuit())) {
+    public boolean isStraight(List<Card> hand) {
+		return (hand.get(0).getValue() == (hand.get(1).getValue() + 1) % 14 && // ordered by rank
+                hand.get(1).getValue() == hand.get(2).getValue() + 1 &&
+                hand.get(2).getValue() == hand.get(3).getValue() + 1 &&	
+                hand.get(3).getValue() == hand.get(4).getValue() + 1)
+				||
+                (hand.get(0).getValue() == (hand.get(1).getValue() - 1) % 14 &&  // ordered by game value
+                hand.get(1).getValue()  == hand.get(2).getValue() - 1 &&
+                hand.get(2).getValue()  == hand.get(3).getValue() - 1 &&	
+                hand.get(3).getValue()  == hand.get(4).getValue() - 1);
+    }
+
+    public boolean isFlush(List<Card> hand) { // returns true if all cards in the hand are the same suit
+        String suit = hand.get(0).getSuit();
+        for (int i = 1; i <= 4; i++) {
+            if (!hand.get(i).getSuit().equals(suit)){
                 return false;
             }
         }
         return true;
     }
 
-    public boolean isStraightFlush(){ //returns true if hand is both a flush and a straight
-        return isFlush() && isStraight();
+    public boolean isStraightFlush(List<Card> hand){ //returns true if hand is both a flush and a straight
+        return isFlush(hand) && isStraight(hand);
     }
 
-    public boolean isRoyalFlush() { // returns true if the hand is a straight flush from 'Ten -> Ace'
-        sortHand();
-        /*
-         * If card 1 == value of 10
-         * && card 2 == value of jack
-         * && card 3 == value of queen
-         * && card 4 == value of king
-         * && card 5 == value of ace (assuming that its treated as a high card)
-         */
-        return isFlush() && playerHand.get(0).getValue() == CardValue.ACE.getCardValue(true)
-                && playerHand.get(1).getValue() == CardValue.KING.getCardValue()
-                && playerHand.get(2).getValue() == CardValue.QUEEN.getCardValue()
-                && playerHand.get(3).getValue() == CardValue.JACK.getCardValue()
-                && playerHand.get(4).getValue() == CardValue.TEN.getCardValue();
+    public boolean isRoyalFlush(List<Card> hand) { // returns true if the hand is a straight flush from 'Ten -> Ace'
+        return isFlush(hand) && hand.get(4).getValue() == 1
+                && hand.get(0).getValue() == CardValue.KING.getCardValue()
+                && hand.get(1).getValue() == CardValue.QUEEN.getCardValue()
+                && hand.get(2).getValue() == CardValue.JACK.getCardValue()
+                && hand.get(3).getValue() == CardValue.TEN.getCardValue();
     }
     
-    public boolean isThreeOfAKind() { // returns true if the hand has three cards of the same value
-        /*
-         * If card 1 == card 3
-         * || card 2 == card 4
-         * || card 3 == card 5
-         */
-
-        sortHand();
-        return playerHand.get(0).getValue() == playerHand.get(2).getValue()
-                || playerHand.get(1).getValue() == playerHand.get(3).getValue()
-                || playerHand.get(2).getValue() == playerHand.get(4).getValue();
+    public boolean isThreeOfAKind(List<Card> hand) { // returns true if the hand has three cards of the same value
+        return hand.get(0).getValue() == hand.get(2).getValue()
+                || hand.get(1).getValue() == hand.get(3).getValue()
+                || hand.get(2).getValue() == hand.get(4).getValue();
     }
     
-    public boolean isTwoPair() { // returns true if the hand has two pairs of cards with the same values
-        /*
-         * If card 1 == card 2 || card 3 == card 4
-         * && card 4 == card 5 || card 2 == card 3
-         * && card 4 == card 5
-         */
-
-        sortHand();
-        return playerHand.get(0).getValue() == playerHand.get(1).getValue()
-                && playerHand.get(2).getValue() == playerHand.get(3).getValue()
-                || playerHand.get(0).getValue() == playerHand.get(1).getValue()
-                && playerHand.get(3).getValue() == playerHand.get(4).getValue()
-                || playerHand.get(1).getValue() == playerHand.get(2).getValue()
-                && playerHand.get(3).getValue() == playerHand.get(4).getValue();
+    public boolean isTwoPair(List<Card> hand) { // returns true if the hand has two pairs of cards with the same values
+        return hand.get(0).getValue() == hand.get(1).getValue()
+                && hand.get(2).getValue() == hand.get(3).getValue()
+                || hand.get(0).getValue() == hand.get(1).getValue()
+                && hand.get(3).getValue() == hand.get(4).getValue()
+                || hand.get(1).getValue() == hand.get(2).getValue()
+                && hand.get(3).getValue() == hand.get(4).getValue();
     }
     
-    public boolean isPair() { // returns true if the hand has one pair of cards with the same value
-        sortHand();
+    public boolean isPair(List<Card> hand) { // returns true if the hand has one pair of cards with the same value
         for (int i = 0; i < 5 - 1; i++) {
-            if (playerHand.get(i).getValue() == playerHand.get(i + 1).getValue())
+            if (hand.get(i).getValue() == hand.get(i + 1).getValue())
                 return true;
         }
         return false;
     }
     
-    public boolean isHigh() { // returns true if the hand has no classification
-        sortHand(); // assuming that its sorted in desencding order when sorting. e.g ace will be
-                    // defaulted to being 14 and will be sorted to the front
-        if (isFlush() || isStraight() || isThreeOfAKind() || isTwoPair() || isPair() || isFullHouse()
-                || isFourOfAKind()) {
+    public boolean isHigh(List<Card> hand) { // returns true if the hand has no classification, ace will default to high
+        if (isFlush(hand) || isStraight(hand) || isThreeOfAKind(hand) || isTwoPair(hand) || isPair(hand) || isFullHouse(hand) || isFourOfAKind(hand)) {
             return false;
-        } else {
-            if (playerHand.get(0).getValue() == CardValue.ACE.getCardValue()) {
-                CardValue.ACE.getCardValue(true);
-                return true; // hand has no classification - highest card is Ace
-            } else {
-                CardValue.ACE.getCardValue(false);
-                return true; // hand has no classification - highest card is !Ace
-            }
         }
+        return true;
     }
+
+
 }

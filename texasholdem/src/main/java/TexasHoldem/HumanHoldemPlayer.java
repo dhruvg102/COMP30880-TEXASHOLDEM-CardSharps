@@ -3,6 +3,7 @@ package TexasHoldem;
 import poker.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HumanHoldemPlayer implements PlayerInterface {
 
@@ -26,7 +27,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
         this.bank = money;
     }
 
-    public boolean askQuestion(String question) 	{
+    public boolean askQuestion(String question)     {
         System.out.print("\n>> " + question + " (y/n)?  ");
 
         byte[] input = new byte[100];
@@ -107,6 +108,12 @@ public class HumanHoldemPlayer implements PlayerInterface {
     }
 
     @Override
+    public void addCommunityCards(List<Card> cards){
+        this.hand.addCommunityCards(cards);
+    }
+
+
+    @Override
     public void takePot(PotOfMoney pot) {
         System.out.println("\n> " + getName() + " says: I WIN " + addCount(pot.getTotal(), "chip", "chips") + "!\n");
         System.out.println(hand.toString());
@@ -146,6 +153,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
 		if(bank < blindAmt) {
 			stake = stake + bank;
+            
 			pot.raiseStake(bank);
 			bank = 0;
 
@@ -251,6 +259,7 @@ public class HumanHoldemPlayer implements PlayerInterface {
             // not enough money to cover the bet
             if(shouldAllIn(pot)) {
                 allIn(pot);
+                return;
             }
 
             System.out.println("\n> " + getName() + " says: I'm out!\n");
@@ -274,17 +283,23 @@ public class HumanHoldemPlayer implements PlayerInterface {
 
                 if (shouldSee(pot)) {
                     seeBet(pots, currPotIndex);
-
-                    if (shouldRaise(pot))
-                        raiseBet(pots, currPotIndex);
                 }
-                else
+                else{
                     fold();
+                    return;
+               }
             }
+            if (shouldRaise(pot)){
+                raiseBet(pots, currPotIndex);
+                return;
+            }
+
             else {
+                System.out.println(pot.getCurrentStake() + " " + getStake());
                 System.out.println("\n> " + getName() + " says: I check!\n");
             }
         }
+
     }
 
     private String addCount(int count, String singular, String plural) {
