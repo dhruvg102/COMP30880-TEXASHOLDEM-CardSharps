@@ -112,6 +112,6 @@ public class PostFlopHandAnalyser {
     }
 
     private boolean isMonsterHand() {
-        return (isStrongTwoPair() || (hand.evaluateHand(mergedHand) >= hand.HandValue.THREES_VALUE.getHandValue()) );
+        return (isStrongTwoPair() || (hand.evaluateHand(mergedHand) >= 10000));//hand.HandValue.THREES_VALUE.getHandValue()) );
     }
 }
