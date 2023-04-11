@@ -28,6 +28,18 @@ public class PostFlopHandAnalyser {
         this.mergedHand.addAll(communityCards);
     }
 
+    public void updateCardHand(HoldemHand hand) {
+        this.hand = hand;
+
+        this.holdCards.add(hand.getCard(0));
+        this.holdCards.add(hand.getCard(1));
+
+        this.communityCards = (ArrayList<Card>) hand.getCommunityCards();
+
+        this.mergedHand.addAll(holdCards);
+        this.mergedHand.addAll(communityCards);
+    }
+
     public void sortMergedHandAscending() {
         Card temp;
 
@@ -388,5 +400,9 @@ public class PostFlopHandAnalyser {
         }
 
         return drawy;
+    }
+
+    public boolean isDry() {
+        return !(isDrawy());
     }
 }
